@@ -1,24 +1,48 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import AppContent from '@/components/AppContent.vue';
-import type { Location } from '@/components/properties/PropertyForm.vue';
+import { ref, watch } from 'vue';
+import type { Location } from '@/components/properties/LocationModal.vue';
+import PropertyForm from '@/components/properties/PropertyForm.vue';
+import type { Rule } from '@/components/properties/RuleModal.vue';
+import RuleModal from '@/components/properties/RuleModal.vue';
+import type { Unit } from '@/components/properties/UnitModal.vue';
+import UnitModal from '@/components/properties/UnitModal.vue';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { dashboard } from '@/routes';
 import { index as propertiesIndex, update as propertiesUpdate } from '@/routes/properties';
+import type { Room } from '../rooms/index.vue';
+import { Switch } from '@/components/ui/switch';
 
 interface Property {
     id: number;
     name: string;
     currency: string;
-    mobile: string;
-    location_id: number;
+    owner_name: string;
+    owner_country_code: string;
+    owner_mobile: string;
+    manager_name: string;
+    manager_country_code: string;
+    manager_mobile: string;
+    account_owner: string;
+    account_bank: string;
+    account_number: string;
     notes: string;
-    location?: Location;
+    location: Location;
+    rules?: Rule[];
+    units?: Unit[];
 }
 
 const props = defineProps<{
     property: Property;
     locations: Location[];
+    rooms: Room[];
 }>();
+
+const selectedRule = ref<Rule | null>(null);
+const isRuleModalOpen = ref(false);
+const selectedUnit = ref<Unit | null>(null);
+const isUnitModalOpen = ref(false);
 
 defineOptions({
     layout: {
@@ -41,9 +65,64 @@ defineOptions({
 const form = useForm({
     name: props.property.name,
     currency: props.property.currency,
-    mobile: props.property.mobile,
-    location_id: String(props.property.location_id),
+    owner_name: props.property.owner_name,
+    owner_country_code: props.property.owner_country_code,
+    owner_mobile: props.property.owner_mobile,
+    manager_name: props.property.manager_name,
+    manager_country_code: props.property.manager_country_code,
+    manager_mobile: props.property.manager_mobile,
+    location: props.property.location,
     notes: props.property.notes,
+    account_owner: props.property.account_owner,
+    account_bank: props.property.account_bank,
+    account_number: props.property.account_number,
+    rules: props.property.rules,
+    units: props.property.units
+});
+
+// Inside edit.vue script
+function addRule(rule: Rule) {
+    if (!form.rules) {
+        form.rules = [];
+    }
+
+    if (selectedRule.value && selectedRule.value.id) {
+        const index = form.rules.findIndex((r) => r.id === rule.id);
+
+        if (index !== -1) {
+            form.rules[index] = rule;
+        }
+    } else {
+        form.rules.push({ ...rule, id: Date.now() });
+    }
+}
+
+function addUnit(unit: Unit) {
+    if (!form.units) {
+        form.units = [];
+    }
+
+    if (selectedUnit.value && selectedUnit.value.id) {
+        const index = form.units.findIndex((u) => u.id === unit.id);
+
+        if (index !== -1) {
+            form.units[index] = unit;
+        }
+    } else {
+        form.units.push({ ...unit, id: Date.now() });
+    }
+}
+
+watch(selectedRule, (newVal) => {
+    if (newVal) {
+        addRule(newVal);
+    }
+});
+
+watch(selectedUnit, (newVal) => {
+    if (newVal) {
+        addUnit(newVal);
+    }
 });
 
 function submit() {
@@ -55,184 +134,80 @@ function submit() {
 
     <Head title="Edit Property" />
 
-    <AppContent>
-        <form id="update_property">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="card shadow mb-4">
-                        <!-- Card Header - Dropdown -->
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Informasi Properti</h6>
-                        </div>
-                        <!-- Card Body -->
-                        <div class="card-body">
-                            <input type="number" name="property-code" class="d-none" />
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <i class="fas fa-home"></i>
-                                    </div>
-                                </div>
-                                <input type="text" class="form-control" id="property-name" name="property-name"
-                                    placeholder="Nama Properti" />
-                            </div>
+    <div class="grid grid-cols-2 gap-x-6 space-y-6">
+        <div>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Edit Property</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <PropertyForm v-model:form="form" :locations="locations" submit-label="Update" @submit="submit" />
+                </CardContent>
+            </Card>
+        </div>
 
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </div>
-                                </div>
-                                <input type="text" class="d-none" id="property-location" name="property-location" />
-                                <label class="form-control" id="property-location-value"
-                                    data-i18n="location">Lokasi</label>
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                </div>
-                                <input type="text" class="form-control" id="property-manager" name="property-manager"
-                                    placeholder="Pengelola Properti" />
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <i class="fab fa-whatsapp"></i>
-                                    </div>
-                                    <div class="input-group-text">
-                                        <i class="fi fi-id"></i>
-                                    </div>
-                                    <span class="input-group-text">+62</span>
-                                </div>
-                                <input type="tel" class="form-control" id="property-phone" name="property-phone"
-                                    placeholder="No. WA Pengelola" />
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <i class="fas fa-money-bill"></i>
-                                    </div>
-                                </div>
-                                <select class="form-control selectpicker" id="property-currency"
-                                    name="property-currency">
-                                    <option selected disabled hidden>Mata Uang</option>
-                                    <option value="IDR">Indonesian Rupiah (IDR)</option>
-                                </select>
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">Nama Pemilik Rekening</div>
-                                </div>
-                                <input type="text" class="form-control" id="property-account-owner"
-                                    name="property-account-owner" placeholder="Nama Pemilik Rekening" />
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">Pilih Bank</div>
-                                </div>
-                                <input type="text" class="form-control" id="property-account-bank"
-                                    name="property-account-bank" placeholder="Pilih Bank" />
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">Nomor Rekening</div>
-                                </div>
-                                <input type="text" class="form-control" id="property-account-number"
-                                    name="property-account-number" placeholder="Nomor Rekening" />
-                            </div>
-
-                            <button class="btn btn-primary" id="updatePropertyBtn">Simpan</button>
-                            <button class="btn btn-danger" id="removePropertyBtn">Hapus Properti</button>
-                        </div>
+        <div class="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Property Rules</CardTitle>
+                    <RuleModal v-model:rule="selectedRule" v-model:open="isRuleModalOpen" />
+                </CardHeader>
+                <CardContent>
+                    <div @click="selectedRule = rule; isRuleModalOpen = true" v-for="rule in (form.rules ?? [])"
+                        :key="rule.id" class="cursor-pointer hover:bg-neutral-100 p-2 rounded">
+                        {{ rule.title }}
+                        {{ rule.description }}
                     </div>
-                </div>
+                </CardContent>
+            </Card>
 
-                <div class="col-lg-6">
-                    <div class="card shadow mb-4">
-                        <!-- Card Header - Dropdown -->
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Peraturan Properti</h6>
-                            <div class="dropdown no-arrow">
-                                <a id="add-rule-btn">
-                                    <span class="fa fa-plus"></span>
-                                </a>
-                            </div>
-                        </div>
-                        <!-- Card Body -->
-                        <div class="card-body">
-                            <div class="no-data">Tidak Ada Data</div>
-                        </div>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Property Units</CardTitle>
+                    <UnitModal v-model:unit="selectedUnit" v-model:open="isUnitModalOpen" :rooms="rooms ?? []" />
+                </CardHeader>
+                <CardContent>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="table-room" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Daily Rent</th>
+                                    <th>Weekly Rent</th>
+                                    <th>Monthly Rent</th>
+                                    <th>Annual Rent</th>
+                                    <th>Rentable</th>
+                                    <th>Condition</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="unit in property.units ?? []" :key="unit.id">
+                                    <td>{{ unit.name }}</td>
+                                    <td>{{ unit.room?.daily_price }}</td>
+                                    <td>{{ unit.room?.weekly_price }}</td>
+                                    <td>{{ unit.room?.monthly_price }}</td>
+                                    <td>{{ unit.room?.annual_price }}</td>
+                                    <td>
+                                        <Switch v-model="unit.rentable" />
+                                    </td>
+                                    <td>
+                                        <Select v-model="unit.condition">
+                                            <SelectTrigger>
+                                                <SelectValue :placeholder="unit.condition" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="clean">Clean</SelectItem>
+                                                <SelectItem value="dirty">Dirty</SelectItem>
+                                                <SelectItem value="maintenance">Maintenance</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-
-                    <div class="card shadow mb-4">
-                        <!-- Card Header - Dropdown -->
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Unit/Kamar</h6>
-                            <div class="dropdown no-arrow">
-                                <a id="add-room-btn">
-                                    <span class="fa fa-plus"></span>
-                                </a>
-                            </div>
-                        </div>
-                        <!-- Card Body -->
-                        <div class="card-body">
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <i class="fas fa-home"></i>
-                                    </div>
-                                </div>
-                                <input type="text" class="form-control" id="room-name" name="room-name"
-                                    data-i18n="[placeholder]room-name" />
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <i class="fas fa-list-ul"></i>
-                                    </div>
-                                </div>
-                                <select class="form-control unitSelector" id="room-type" name="room-type"
-                                    data-i18n="[placeholder]room-type"></select>
-                            </div>
-
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <i class="fas fa-level-up-alt"></i>
-                                    </div>
-                                </div>
-                                <input type="text" class="form-control" id="room-floor" name="room-floor"
-                                    data-i18n="[placeholder]room-floor" />
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="table-room" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th data-field="room-name">Name</th>
-                                            <th data-field="room-type" data-formatter="propertyUnitFormatter">Name</th>
-                                            <th data-field="room-floor">Floor</th>
-                                            <th data-events="roomActionHandler" data-formatter="roomActionFormatter">
-                                                Contact Person</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </form>
-    </AppContent>
+                </CardContent>
+            </Card>
+        </div>
+    </div>
 </template>

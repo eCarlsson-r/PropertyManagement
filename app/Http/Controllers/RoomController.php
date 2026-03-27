@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\Property;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -24,7 +25,9 @@ class RoomController extends Controller
 
     public function create()
     {
-        return inertia("rooms/create");
+        return inertia("rooms/create", [
+            "properties" => Property::all(),
+        ]);
     }
 
     public function store(Request $request)
@@ -47,6 +50,7 @@ class RoomController extends Controller
     {
         return inertia("rooms/edit", [
             "room" => $room,
+            "properties" => Property::all(),
         ]);
     }
 

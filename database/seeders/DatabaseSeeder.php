@@ -27,7 +27,22 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('5050'),
         ]);
 
-        $location = Location::create([
+        $property = Property::create([
+            "name" => "Kos Gang D",
+            "owner_name" => "Pak Budi",
+            "owner_country_code" => "62",
+            "owner_mobile" => "81234567890",
+            "manager_name" => "Pak Edo",
+            "manager_country_code" => "62",
+            "manager_mobile" => "81234599870",
+            "account_owner" => "Pak Budi",
+            "account_bank" => "BCA",
+            "account_number" => "1234567890",
+            "currency" => "IDR"
+        ]);
+
+        Location::create([
+            "property_id" => $property->id,
             "address" => "Jl. K. H. Syekh Abdul Wahab Rokan Gg. D No. 1B",
             "country" => "Indonesia",
             "province" => "Sumatera Utara",
@@ -35,13 +50,6 @@ class DatabaseSeeder extends Seeder
             "district" => "Durian",
             "subdistrict" => "Medan Timur",
             "postal" => "20235"
-        ]);
-
-        $property = Property::create([
-            "name" => "Kos Gang D",
-            "location_id" => $location->id,
-            "mobile" => "0811604963",
-            "currency" => "IDR"
         ]);
 
         Expense::create([

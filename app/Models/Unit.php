@@ -11,6 +11,8 @@ class Unit extends Model
         "name",
         "floor",
         "room_id",
+        "available",
+        "condition"
     ];
 
     protected $guarded = [

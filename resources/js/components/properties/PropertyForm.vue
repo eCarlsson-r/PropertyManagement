@@ -1,30 +1,33 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import type { InertiaForm } from '@inertiajs/vue3';
+import { currencies } from 'country-data-list';
+import CountrySelect from '@/components/CountrySelect.vue';
 import InputError from '@/components/InputError.vue';
+import LocationModal from '@/components/properties/LocationModal.vue';
+import type { Location } from '@/components/properties/LocationModal.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { index as propertiesIndex } from '@/routes/properties';
 
-export interface Location {
-    id: number;
-    address: string;
-    country: string;
-    province: string;
-    city: string;
-    district: string;
-    subdistrict: string;
-    postal: string;
-}
-
 export interface PropertyFormData {
+    id?: number;
+    account_bank?: string;
+    account_number?: string;
+    account_owner?: string;
     name: string;
     currency: string;
-    mobile: string;
-    location_id: string;
-    notes: string;
+    location: Location;
+    notes?: string;
+    owner_name: string;
+    owner_country_code: string;
+    owner_mobile: string;
+    manager_name: string;
+    manager_country_code: string;
+    manager_mobile: string;
 }
 
 const form = defineModel<InertiaForm<PropertyFormData>>('form', { required: true });
@@ -37,6 +40,7 @@ defineProps<{
 const emit = defineEmits<{
     submit: [];
 }>();
+
 </script>
 
 <template>
@@ -47,28 +51,46 @@ const emit = defineEmits<{
             <InputError :message="form.errors.name" />
         </div>
 
-        <div class="grid gap-2">
-            <Label for="location_id">Lokasi</Label>
-            <Select v-model="form.location_id">
-                <SelectTrigger id="location_id">
-                    <SelectValue placeholder="Pilih Lokasi" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem v-for="location in locations" :key="location.id" :value="String(location.id)">
-                        {{ location.address }}, {{ location.city }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-            <InputError :message="form.errors.location_id" />
+        <div class="flex gap-2">
+            <Label>Lokasi</Label>
+            <LocationModal v-model:location="form.location" />
+            <Input v-model="form.location.city" readonly placeholder="Lokasi belum ditentukan" />
         </div>
 
         <div class="grid gap-2">
-            <Label for="mobile">No. WA Pengelola</Label>
-            <div class="flex items-center gap-2">
-                <span class="text-sm text-muted-foreground">+62</span>
-                <Input id="mobile" v-model="form.mobile" type="tel" placeholder="8123456789" class="flex-1" required />
-            </div>
-            <InputError :message="form.errors.mobile" />
+            <Label for="owner_name">Nama Pemilik</Label>
+            <Input id="owner_name" v-model="form.owner_name" placeholder="Nama Pemilik" required />
+            <InputError :message="form.errors.owner_name" />
+        </div>
+
+        <div class="grid gap-2">
+            <Label for="owner_mobile">Nomor WA Pemilik</Label>
+            <InputGroup>
+                <InputGroupInput id="owner_mobile" v-model="form.owner_mobile" type="tel" placeholder="8123456789"
+                    required class="flex-1" />
+                <InputGroupAddon>
+                    <CountrySelect v-model:countryCode="form.owner_country_code" attribute="code" />
+                </InputGroupAddon>
+            </InputGroup>
+            <InputError :message="form.errors.owner_mobile" />
+        </div>
+
+        <div class="grid gap-2">
+            <Label for="manager_name">Nama Pengelola Utama</Label>
+            <Input id="manager_name" v-model="form.manager_name" placeholder="Pengelola Properti" required />
+            <InputError :message="form.errors.manager_name" />
+        </div>
+
+        <div class="grid gap-2">
+            <Label for="manager_mobile">Nomor WA Pengelola Utama</Label>
+            <InputGroup>
+                <InputGroupInput id="manager_mobile" v-model="form.manager_mobile" type="tel" placeholder="8123456789"
+                    required class="flex-1" />
+                <InputGroupAddon>
+                    <CountrySelect v-model:countryCode="form.manager_country_code" attribute="code" />
+                </InputGroupAddon>
+            </InputGroup>
+            <InputError :message="form.errors.manager_mobile" />
         </div>
 
         <div class="grid gap-2">
@@ -78,10 +100,30 @@ const emit = defineEmits<{
                     <SelectValue placeholder="Pilih Mata Uang" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="IDR">Indonesian Rupiah (IDR)</SelectItem>
+                    <SelectItem v-for="currency in currencies.all" :key="currency.code" :value="currency.code">
+                        {{ currency.name }} ({{ currency.code }})
+                    </SelectItem>
                 </SelectContent>
             </Select>
             <InputError :message="form.errors.currency" />
+        </div>
+
+        <div v-if="form.id" class="grid gap-2">
+            <Label for="account_owner">Nama Pemilik Rekening</Label>
+            <Input id="account_owner" v-model="form.account_owner" placeholder="Nama Pemilik Rekening" required />
+            <InputError :message="form.errors.account_owner" />
+        </div>
+
+        <div v-if="form.id" class="grid gap-2">
+            <Label for="account_bank">Bank</Label>
+            <Input id="account_bank" v-model="form.account_bank" placeholder="Bank" required />
+            <InputError :message="form.errors.account_bank" />
+        </div>
+
+        <div v-if="form.id" class="grid gap-2">
+            <Label for="account_number">Nomor Rekening</Label>
+            <Input id="account_number" v-model="form.account_number" placeholder="Nomor Rekening" required />
+            <InputError :message="form.errors.account_number" />
         </div>
 
         <div class="grid gap-2">
@@ -97,7 +139,7 @@ const emit = defineEmits<{
             </Button>
             <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
                 leave-active-class="transition ease-in-out" leave-to-class="opacity-0">
-                <p v-show="form.recentlySuccessful" class="text-sm text-neutral-600">Saved.</p>
+                <p v-if="form.recentlySuccessful" class="text-sm text-neutral-600">Saved.</p>
             </Transition>
         </div>
     </form>

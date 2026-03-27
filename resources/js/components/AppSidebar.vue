@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Building, FolderGit2, LandPlot, LayoutGrid, Receipt, User } from 'lucide-vue-next';
+import { BookOpen, Building, FolderGit2, House, LayoutGrid, Receipt, User } from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -15,9 +15,9 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import locations from '@/routes/locations';
 import properties from '@/routes/properties';
 import receipts from '@/routes/receipts';
+import rooms from '@/routes/rooms';
 import tenants from '@/routes/tenants';
 import type { NavItem } from '@/types';
 
@@ -46,9 +46,9 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Locations',
-        href: locations.index(),
-        icon: LandPlot,
+        title: 'Rooms',
+        href: rooms.index(),
+        icon: House,
     },
     {
         title: 'Repository',

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, Building, Menu, Search, Receipt, User, LandPlot, House } from 'lucide-vue-next';
+import { LayoutGrid, Building, Menu, Search, Receipt, User, House } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
@@ -36,7 +36,6 @@ import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
-import locations from '@/routes/locations';
 import properties from '@/routes/properties';
 import receipts from '@/routes/receipts';
 import rooms from '@/routes/rooms';
@@ -82,11 +81,6 @@ const mainNavItems: NavItem[] = [
 ];
 
 const rightNavItems: NavItem[] = [
-    {
-        title: 'Locations',
-        href: locations.index(),
-        icon: LandPlot,
-    },
     {
         title: 'Rooms',
         href: rooms.index(),

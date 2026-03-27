@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Property;
 use App\Models\Location;
+use App\Models\Room;
 use Inertia\Inertia;
 
 class PropertyController extends Controller
@@ -32,7 +33,7 @@ class PropertyController extends Controller
     public function create()
     {
         return Inertia::render("properties/create", [
-            "locations" => Location::all(),
+            "locations" => Location::all()
         ]);
     }
 
@@ -41,12 +42,21 @@ class PropertyController extends Controller
         $request->validate([
             "name" => "required",
             "currency" => "required",
-            "mobile" => "required",
-            "location_id" => "required",
-            "notes" => "required",
+            "owner_name" => "required",
+            "owner_country_code" => "required",
+            "owner_mobile" => "required",
+            "manager_name" => "required",
+            "manager_country_code" => "required",
+            "manager_mobile" => "required",
+            "account_owner" => "nullable",
+            "account_bank" => "nullable",
+            "account_number" => "nullable",
+            "notes" => "nullable",
         ]);
 
-        Property::create($request->all());
+        $property = Property::create($request->except("location"));
+
+        Location::create($request->location + ["property_id" => $property->id]);
 
         return redirect()->route("properties.index");
     }
@@ -54,8 +64,9 @@ class PropertyController extends Controller
     public function edit(Property $property)
     {
         return Inertia::render("properties/edit", [
-            "property" => $property->load('location'),
+            "property" => $property->load(['location', 'rules', 'units.room']),
             "locations" => Location::all(),
+            "rooms" => Room::all(),
         ]);
     }
 
@@ -64,9 +75,17 @@ class PropertyController extends Controller
         $request->validate([
             "name" => "required",
             "currency" => "required",
-            "mobile" => "required",
-            "location_id" => "required",
-            "notes" => "required",
+            "owner_name" => "required",
+            "owner_country_code" => "required",
+            "owner_mobile" => "required",
+            "manager_name" => "required",
+            "manager_country_code" => "required",
+            "manager_mobile" => "required",
+            "location" => "required",
+            "account_owner" => "nullable",
+            "account_bank" => "nullable",
+            "account_number" => "nullable",
+            "notes" => "nullable",
         ]);
 
         $property->update($request->all());

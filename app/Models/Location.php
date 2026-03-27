@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Location extends Model
 {
     protected $fillable = [
+        "property_id",
         "address",
         "country",
         "province",
@@ -18,8 +19,8 @@ class Location extends Model
 
     protected $guarded = ["id"];
 
-    public function properties()
+    public function property()
     {
-        return $this->hasMany(Property::class);
+        return $this->belongsTo(Property::class);
     }
 }

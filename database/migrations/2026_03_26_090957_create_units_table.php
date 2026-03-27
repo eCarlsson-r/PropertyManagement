@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string("name");
             $table->integer("floor");
             $table->foreignId("room_id")->constrained("rooms")->cascadeOnDelete();
+            $table->boolean("available")->default(true);
+            $table->enum("condition", ["clean", "dirty", "maintenance"])->default("clean");
             $table->timestamps();
         });
     }

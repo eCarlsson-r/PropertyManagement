@@ -10,12 +10,14 @@ import { index as roomsIndex, create as roomsCreate, edit as roomsEdit, destroy 
 
 export interface Room {
     id: number;
+    property_id: number;
     name: string;
     area: number;
     daily_price: number;
     weekly_price: number;
     monthly_price: number;
     annual_price: number;
+    notes?: string;
 }
 
 interface PaginatedData<T> {

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import AppContent from '@/components/AppContent.vue';
+import type { Location } from '@/components/properties/LocationModal.vue';
 import PropertyForm from '@/components/properties/PropertyForm.vue';
-import type { Location } from '@/components/properties/PropertyForm.vue';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { dashboard } from '@/routes';
 import { index as propertiesIndex, store as propertiesStore } from '@/routes/properties';
@@ -32,9 +31,22 @@ defineOptions({
 const form = useForm({
     name: '',
     currency: '',
-    mobile: '',
-    location_id: '',
+    location: {
+        address: '',
+        country: '',
+        province: '',
+        city: '',
+        district: '',
+        subdistrict: '',
+        postal: '',
+    },
     notes: '',
+    owner_name: '',
+    owner_country_code: '',
+    owner_mobile: '',
+    manager_name: '',
+    manager_country_code: '',
+    manager_mobile: '',
 });
 
 function submit() {
@@ -46,14 +58,12 @@ function submit() {
 
     <Head title="Add New Property" />
 
-    <AppContent>
-        <Card>
-            <CardHeader>
-                <CardTitle>Add New Property</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <PropertyForm v-model:form="form" :locations="locations" submit-label="Add" @submit="submit" />
-            </CardContent>
-        </Card>
-    </AppContent>
+    <Card>
+        <CardHeader>
+            <CardTitle>Add New Property</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <PropertyForm v-model:form="form" :locations="locations" submit-label="Add" @submit="submit" />
+        </CardContent>
+    </Card>
 </template>
