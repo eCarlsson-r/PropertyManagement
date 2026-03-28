@@ -10,6 +10,7 @@ use App\Models\Room;
 use App\Models\Unit;
 use App\Models\Receipt;
 use App\Models\Expense;
+use App\Models\Rule;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -50,6 +51,18 @@ class DatabaseSeeder extends Seeder
             "district" => "Durian",
             "subdistrict" => "Medan Timur",
             "postal" => "20235"
+        ]);
+
+        Rule::create([
+            "property_id" => $property->id,
+            "title" => "Pembayaran Tepat Waktu",
+            "description" => "Semua tenant wajib membayar sewa sebelum tanggal jatuh tempo. Keterlambatan lebih dari 5 hari akan dikenakan denda."
+        ]);
+
+        Rule::create([
+            "property_id" => $property->id,
+            "title" => "Kebersihan",
+            "description" => "Tenant wajib menjaga kebersihan kamar dan area bersama."
         ]);
 
         Expense::create([
@@ -95,17 +108,85 @@ class DatabaseSeeder extends Seeder
 
         $tenant1 = Tenant::create([
             "name" => "Tince Ezra Desema",
+            "country_code" => "62",
             "mobile" => "82276087295",
             "unit_id" => $unit1->id,
             "cycle" => "monthly",
+            "notes" => "Tenant is generally polite but has history of paying rent 3-5 days late. Works freelance so income is inconsistent. Requested extension twice in the past.",
+            "emergency_contact_name" => "Pak Budi",
+            "emergency_contact_relationship" => "Ayah",
+            "emergency_contact_country_code" => "62",
+            "emergency_contact_mobile" => "81234567890",
             "deposit" => 1000000
         ]);
 
         $tenant2 = Tenant::create([
             "name" => "Mariani Limbong",
+            "country_code" => "62",
             "mobile" => "82164049453",
             "unit_id" => $unit2->id,
             "cycle" => "monthly",
+            "notes" => "Tenant has stable job and usually pays on time. Recently reported issues with water supply and complained about maintenance delay.",
+            "emergency_contact_name" => "Pak Budi",
+            "emergency_contact_relationship" => "Ayah",
+            "emergency_contact_country_code" => "62",
+            "emergency_contact_mobile" => "81234567890",
+            "deposit" => 750000
+        ]);
+
+        Tenant::create([
+            "name" => "Rizky Pratama",
+            "country_code" => "62",
+            "mobile" => "81200011122",
+            "unit_id" => $unit1->id,
+            "cycle" => "monthly",
+            "notes" => "Frequently late payments, sometimes up to 10 days overdue. Avoids communication and difficult to contact.",
+            "emergency_contact_name" => "Ibu Sari",
+            "emergency_contact_relationship" => "Ibu",
+            "emergency_contact_country_code" => "62",
+            "emergency_contact_mobile" => "81200000001",
+            "deposit" => 1000000
+        ]);
+
+        Tenant::create([
+            "name" => "Dewi Anggraini",
+            "country_code" => "62",
+            "mobile" => "81399988877",
+            "unit_id" => $unit2->id,
+            "cycle" => "monthly",
+            "notes" => "Very reliable tenant. Always pays early. Keeps room clean and follows all rules.",
+            "emergency_contact_name" => "Pak Agus",
+            "emergency_contact_relationship" => "Ayah",
+            "emergency_contact_country_code" => "62",
+            "emergency_contact_mobile" => "81300000002",
+            "deposit" => 750000
+        ]);
+
+        Tenant::create([
+            "name" => "Andi Saputra",
+            "country_code" => "62",
+            "mobile" => "81233344455",
+            "unit_id" => $unit1->id,
+            "cycle" => "monthly",
+            "notes" => "Occasional late payments. Recently requested discount due to financial issues. Communication is good.",
+            "emergency_contact_name" => "Pak Rahmat",
+            "emergency_contact_relationship" => "Ayah",
+            "emergency_contact_country_code" => "62",
+            "emergency_contact_mobile" => "81200000003",
+            "deposit" => 1000000
+        ]);
+
+        Tenant::create([
+            "name" => "Siti Nurhaliza",
+            "country_code" => "62",
+            "mobile" => "81277766655",
+            "unit_id" => $unit2->id,
+            "cycle" => "monthly",
+            "notes" => "Pays on time but has frequent complaints about noise and neighbors.",
+            "emergency_contact_name" => "Ibu Lina",
+            "emergency_contact_relationship" => "Ibu",
+            "emergency_contact_country_code" => "62",
+            "emergency_contact_mobile" => "81200000004",
             "deposit" => 750000
         ]);
 
@@ -147,12 +228,30 @@ class DatabaseSeeder extends Seeder
             "total" => "2250000",
             "fully_paid" => false,
             "reminder" => "1-day-advance",
-            "notes" => "",
             "adults" => "1",
             "children" => "1",
             "babies" => "0",
             "pets" => "0",
+            "notes" => "Tenant has not completed payment and requested extension.",
             "created_at" => "2025-07-25"
+        ]);
+
+        Expense::create([
+            "date" => "2025-05-10",
+            "title" => "Perbaikan Pompa Air",
+            "property_id" => $property->id,
+            "amount" => 1200000,
+            "category" => "fixing",
+            "notes" => "Water pump broke down causing complaints from tenants. Urgent repair needed."
+        ]);
+
+        Expense::create([
+            "date" => "2025-05-15",
+            "title" => "Tagihan Listrik Tinggi",
+            "property_id" => $property->id,
+            "amount" => 1500000,
+            "category" => "electricity",
+            "notes" => "Electricity usage unusually high this month. Possibly due to AC usage or faulty wiring."
         ]);
     }
 }

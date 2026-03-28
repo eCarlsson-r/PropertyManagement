@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Property;
 use App\Models\Receipt;
+use App\Models\Unit;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 
 class ReceiptController extends Controller
@@ -37,7 +40,11 @@ class ReceiptController extends Controller
 
     public function create()
     {
-        return inertia("receipts/create");
+        return inertia("receipts/create", [
+            "properties" => Property::all(),
+            "units" => Unit::all(),
+            "tenants" => Tenant::all()
+        ]);
     }
 
     public function store(Request $request)
@@ -74,7 +81,10 @@ class ReceiptController extends Controller
     public function edit(Receipt $receipt)
     {
         return inertia("receipts/edit", [
-            "receipt" => $receipt
+            "receipt" => $receipt->load(['unit', 'tenant']),
+            "properties" => Property::all(),
+            "units" => Unit::all(),
+            "tenants" => Tenant::all()
         ]);
     }
 

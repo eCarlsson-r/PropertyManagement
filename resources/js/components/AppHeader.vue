@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, Building, Menu, Search, Receipt, User, House } from 'lucide-vue-next';
+import { LayoutGrid, Building, Menu, Search, Files, Receipt, User, Sparkles } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
@@ -36,6 +36,7 @@ import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
+import expenses from '@/routes/expenses';
 import properties from '@/routes/properties';
 import receipts from '@/routes/receipts';
 import rooms from '@/routes/rooms';
@@ -59,14 +60,14 @@ const activeItemStyles =
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
         title: 'Property',
         href: properties.index(),
         icon: Building
+    },
+    {
+        title: 'Rooms',
+        href: rooms.index(),
+        icon: LayoutGrid,
     },
     {
         title: 'Tenant',
@@ -76,15 +77,20 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Receipt',
         href: receipts.index(),
+        icon: Files
+    },
+    {
+        title: 'Expense',
+        href: expenses.index(),
         icon: Receipt
     }
 ];
 
 const rightNavItems: NavItem[] = [
     {
-        title: 'Rooms',
-        href: rooms.index(),
-        icon: House,
+        title: 'AI Insights',
+        href: '/ai/insights',
+        icon: Sparkles
     }
 ];
 </script>

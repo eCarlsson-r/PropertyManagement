@@ -49,63 +49,63 @@ const submit = () => {
     <Dialog v-model:open="isDialogOpen">
         <DialogTrigger as-child>
             <Button variant="outline">
-                Input Lokasi Properti
+                Add Location
             </Button>
         </DialogTrigger>
         <DialogContent class="sm:max-w-[425px]">
             <form @submit.prevent="submit" class="space-y-6">
                 <DialogHeader>
-                    <DialogTitle>Input Lokasi Properti</DialogTitle>
+                    <DialogTitle>Add Location</DialogTitle>
                     <DialogDescription>
-                        Masukkan data lokasi properti
+                        Enter property location details
                     </DialogDescription>
                 </DialogHeader>
 
                 <div class="grid gap-2">
-                    <Label for="address">Alamat</Label>
-                    <Input id="address" v-model="form.address" placeholder="Alamat" required />
+                    <Label for="address">Address</Label>
+                    <Input id="address" v-model="form.address" placeholder="Address" required />
                     <InputError :message="form.errors.address" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="country">Negara</Label>
+                    <Label for="country">Country</Label>
                     <CountrySelect v-model:countryCode="form.country" attribute="name" />
                     <InputError :message="form.errors.country" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="province">Provinsi</Label>
-                    <Input id="province" v-model="form.province" placeholder="Provinsi" required />
+                    <Label for="province">Province</Label>
+                    <Input id="province" v-model="form.province" placeholder="Province" required />
                     <InputError :message="form.errors.province" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="city">Kota</Label>
-                    <Input id="city" v-model="form.city" placeholder="Kota" required />
+                    <Label for="city">City</Label>
+                    <Input id="city" v-model="form.city" placeholder="City" required />
                     <InputError :message="form.errors.city" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="district">Kecamatan / Desa</Label>
-                    <Input id="district" v-model="form.district" placeholder="Kecamatan" required />
+                    <Label for="district">District / Village</Label>
+                    <Input id="district" v-model="form.district" placeholder="District" required />
                     <InputError :message="form.errors.district" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="subdistrict">Kelurahan</Label>
-                    <Input id="subdistrict" v-model="form.subdistrict" placeholder="Kelurahan" required />
+                    <Label for="subdistrict">Sub-district</Label>
+                    <Input id="subdistrict" v-model="form.subdistrict" placeholder="Sub-district" required />
                     <InputError :message="form.errors.subdistrict" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="postal">Kode Pos</Label>
-                    <Input id="postal" v-model="form.postal" placeholder="Kode Pos" required />
+                    <Label for="postal">Postal Code</Label>
+                    <Input id="postal" v-model="form.postal" placeholder="Postal Code" required />
                     <InputError :message="form.errors.postal" />
                 </div>
                 <DialogFooter>
-                    <Button type="submit" :disabled="form.processing">Gunakan Lokasi</Button>
+                    <Button type="submit" :disabled="form.processing">Use Location</Button>
                     <DialogClose as-child>
-                        <Button variant="outline">Batal</Button>
+                        <Button variant="outline">Cancel</Button>
                     </DialogClose>
                 </DialogFooter>
             </form>

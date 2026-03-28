@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tenant;
+use App\Models\Property;
+use App\Models\Room;
+use App\Models\Unit;
 use Inertia\Inertia;
 
 class TenantController extends Controller
@@ -18,8 +21,10 @@ class TenantController extends Controller
             ->when($search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%")
-                    ->orWhere('mobile', 'like', "%{$search}%");
+                    ->orWhere('mobile', 'like', "%{$search}%")
+                    ->orWhere('unit.name', 'like', "%{$search}%")
+                    ->orWhere('unit.property.name', 'like', "%{$search}%")
+                    ->orWhere('unit.room.name', 'like', "%{$search}%");
             })
             ->when($option, function ($query, $option) {
                 if ($option === 'least-days') {
@@ -31,9 +36,9 @@ class TenantController extends Controller
                 } elseif ($option === 'za') {
                     $query->orderBy('name', 'desc');
                 } elseif ($option === 'az-unit') {
-                    $query->orderBy('unit_id', 'asc');
+                    $query->orderBy('unit.name', 'asc');
                 } elseif ($option === 'za-unit') {
-                    $query->orderBy('unit_id', 'desc');
+                    $query->orderBy('unit.name', 'desc');
                 }
             })
             ->paginate(10)
@@ -49,23 +54,46 @@ class TenantController extends Controller
 
     public function create()
     {
-        return Inertia::render("tenants/create");
+        return Inertia::render("tenants/create", [
+            "properties" => Property::all(),
+            "units" => Unit::all()
+        ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
             "name" => "required",
-            "email" => "",
-            "phone" => "",
+            "country_code" => "required",
             "mobile" => "required",
-            "unit_id" => "required",
+            "email" => "nullable",
+            "unit.property_id" => "required",
+            "unit.room_id" => "required",
             "cycle" => "required",
+            "birth_date" => "nullable",
+            "gender" => "nullable",
+            "marital_status" => "nullable",
+            "address" => "nullable",
+            "account_bank" => "nullable",
+            "account_number" => "nullable",
+            "account_owner" => "nullable",
+            "currency" => "nullable",
+            "notes" => "nullable",
+            "emergency_contact_name" => "required",
+            "emergency_contact_relationship" => "required",
+            "emergency_contact_country_code" => "required",
+            "emergency_contact_mobile" => "required",
             "deposit" => "required",
-            "notes" => "",
+            "deposit_bank" => "nullable",
+            "deposit_number" => "nullable"
         ]);
 
-        Tenant::create($request->all());
+        $unit = Unit::where(
+            "property_id",
+            $request->unit["property_id"]
+        )->where("room_id", $request->unit["room_id"])->first();
+
+        Tenant::create($request->except("unit") + ["unit_id" => $unit->id]);
 
         return redirect()->route("tenants.index");
     }
@@ -73,7 +101,9 @@ class TenantController extends Controller
     public function edit(Tenant $tenant)
     {
         return Inertia::render("tenants/edit", [
-            "tenant" => $tenant,
+            "tenant" => $tenant->load("unit.property", "unit.room"),
+            "properties" => Property::all(),
+            "units" => Unit::all(),
         ]);
     }
 
@@ -81,16 +111,36 @@ class TenantController extends Controller
     {
         $request->validate([
             "name" => "required",
-            "email" => "",
-            "phone" => "",
+            "country_code" => "required",
             "mobile" => "required",
-            "unit_id" => "required",
+            "email" => "nullable",
+            "unit.property_id" => "required",
+            "unit.room_id" => "required",
             "cycle" => "required",
+            "birth_date" => "nullable",
+            "gender" => "nullable",
+            "marital_status" => "nullable",
+            "address" => "nullable",
+            "account_bank" => "nullable",
+            "account_number" => "nullable",
+            "account_owner" => "nullable",
+            "currency" => "nullable",
+            "notes" => "nullable",
+            "emergency_contact_name" => "required",
+            "emergency_contact_relationship" => "required",
+            "emergency_contact_country_code" => "required",
+            "emergency_contact_mobile" => "required",
             "deposit" => "required",
-            "notes" => "",
+            "deposit_bank" => "nullable",
+            "deposit_number" => "nullable"
         ]);
 
-        $tenant->update($request->all());
+        $unit = Unit::where(
+            "property_id",
+            $request->unit["property_id"]
+        )->where("room_id", $request->unit["room_id"])->first();
+
+        $tenant->update($request->except("unit") + ["unit_id" => $unit->id]);
 
         return redirect()->route("tenants.index");
     }

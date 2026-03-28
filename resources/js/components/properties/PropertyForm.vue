@@ -46,25 +46,25 @@ const emit = defineEmits<{
 <template>
     <form @submit.prevent="emit('submit')" class="space-y-6">
         <div class="grid gap-2">
-            <Label for="name">Nama Properti</Label>
-            <Input id="name" v-model="form.name" placeholder="Nama Properti" required />
+            <Label for="name">Property Name</Label>
+            <Input id="name" v-model="form.name" placeholder="Property Name" required />
             <InputError :message="form.errors.name" />
         </div>
 
         <div class="flex gap-2">
-            <Label>Lokasi</Label>
+            <Label>Location</Label>
             <LocationModal v-model:location="form.location" />
-            <Input v-model="form.location.city" readonly placeholder="Lokasi belum ditentukan" />
+            <Input v-model="form.location.city" readonly placeholder="Location not specified" />
         </div>
 
         <div class="grid gap-2">
-            <Label for="owner_name">Nama Pemilik</Label>
-            <Input id="owner_name" v-model="form.owner_name" placeholder="Nama Pemilik" required />
+            <Label for="owner_name">Owner Name</Label>
+            <Input id="owner_name" v-model="form.owner_name" placeholder="Owner Name" required />
             <InputError :message="form.errors.owner_name" />
         </div>
 
         <div class="grid gap-2">
-            <Label for="owner_mobile">Nomor WA Pemilik</Label>
+            <Label for="owner_mobile">Owner WhatsApp Number</Label>
             <InputGroup>
                 <InputGroupInput id="owner_mobile" v-model="form.owner_mobile" type="tel" placeholder="8123456789"
                     required class="flex-1" />
@@ -76,13 +76,13 @@ const emit = defineEmits<{
         </div>
 
         <div class="grid gap-2">
-            <Label for="manager_name">Nama Pengelola Utama</Label>
-            <Input id="manager_name" v-model="form.manager_name" placeholder="Pengelola Properti" required />
+            <Label for="manager_name">Main Manager Name</Label>
+            <Input id="manager_name" v-model="form.manager_name" placeholder="Property Manager" required />
             <InputError :message="form.errors.manager_name" />
         </div>
 
         <div class="grid gap-2">
-            <Label for="manager_mobile">Nomor WA Pengelola Utama</Label>
+            <Label for="manager_mobile">Main Manager WhatsApp Number</Label>
             <InputGroup>
                 <InputGroupInput id="manager_mobile" v-model="form.manager_mobile" type="tel" placeholder="8123456789"
                     required class="flex-1" />
@@ -94,10 +94,10 @@ const emit = defineEmits<{
         </div>
 
         <div class="grid gap-2">
-            <Label for="currency">Mata Uang</Label>
+            <Label for="currency">Currency</Label>
             <Select v-model="form.currency">
                 <SelectTrigger id="currency">
-                    <SelectValue placeholder="Pilih Mata Uang" />
+                    <SelectValue placeholder="Select Currency" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem v-for="currency in currencies.all" :key="currency.code" :value="currency.code">
@@ -109,8 +109,8 @@ const emit = defineEmits<{
         </div>
 
         <div v-if="form.id" class="grid gap-2">
-            <Label for="account_owner">Nama Pemilik Rekening</Label>
-            <Input id="account_owner" v-model="form.account_owner" placeholder="Nama Pemilik Rekening" required />
+            <Label for="account_owner">Account Holder Name</Label>
+            <Input id="account_owner" v-model="form.account_owner" placeholder="Account Holder Name" required />
             <InputError :message="form.errors.account_owner" />
         </div>
 
@@ -121,21 +121,21 @@ const emit = defineEmits<{
         </div>
 
         <div v-if="form.id" class="grid gap-2">
-            <Label for="account_number">Nomor Rekening</Label>
-            <Input id="account_number" v-model="form.account_number" placeholder="Nomor Rekening" required />
+            <Label for="account_number">Account Number</Label>
+            <Input id="account_number" v-model="form.account_number" placeholder="Account Number" required />
             <InputError :message="form.errors.account_number" />
         </div>
 
         <div class="grid gap-2">
-            <Label for="notes">Catatan</Label>
-            <Input id="notes" v-model="form.notes" placeholder="Catatan properti" />
+            <Label for="notes">Notes</Label>
+            <Input id="notes" v-model="form.notes" placeholder="Property notes" />
             <InputError :message="form.errors.notes" />
         </div>
 
         <div class="flex items-center gap-4">
             <Button :disabled="form.processing">{{ submitLabel }}</Button>
             <Button variant="outline" as-child>
-                <Link :href="propertiesIndex.url()">Batal</Link>
+                <Link :href="propertiesIndex.url()">Cancel</Link>
             </Button>
             <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
                 leave-active-class="transition ease-in-out" leave-to-class="opacity-0">

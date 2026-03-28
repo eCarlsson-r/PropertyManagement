@@ -16,7 +16,7 @@ return new class extends Migration
             $table->date("date");
             $table->foreignId("property_id")->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string("title");
-            $table->decimal("total", 10, 2);
+            $table->decimal("amount", 10, 2);
             $table->enum("category", ["marketing", "grocery", "electricity", "water", "salary", "fixing", "supplies", "others"]);
             $table->text("notes")->nullable();
             $table->timestamps();

@@ -3,20 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expense;
+use App\Models\Property;
 use Illuminate\Http\Request;
 
 class ExpenseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search');
+        $date = $request->input('date');
+
+        $expenses = Expense::query()
+            ->with('property')
+            ->when($search, function ($query, $search) {
+                $query->where('title', 'like', "%{$search}%");
+            })
+            ->when($date, function ($query, $date) {
+                $query->where('date', 'like', "%{$date}%");
+            })
+            ->paginate(10)
+            ->withQueryString();
+
         return inertia("expenses/index", [
-            "expenses" => Expense::all(),
+            "expenses" => $expenses,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 
     public function create()
     {
-        return inertia("expenses/create");
+        return inertia("expenses/create", [
+            "properties" => Property::all(),
+        ]);
     }
 
     public function store(Request $request)
@@ -38,6 +58,7 @@ class ExpenseController extends Controller
     {
         return inertia("expenses/edit", [
             "expense" => $expense,
+            "properties" => Property::all(),
         ]);
     }
 

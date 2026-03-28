@@ -53,33 +53,33 @@ const submit = () => {
     <Dialog v-model:open="open">
         <DialogTrigger as-child>
             <Button variant="outline" @click="rule = null">
-                <Plus /> Tambah
+                <Plus /> Add
             </Button>
         </DialogTrigger>
         <DialogContent class="sm:max-w-[425px]">
             <form @submit.prevent="submit" class="space-y-6">
                 <DialogHeader>
-                    <DialogTitle>Input Aturan Properti</DialogTitle>
+                    <DialogTitle>Add Property Rule</DialogTitle>
                     <DialogDescription>
-                        Masukkan peraturan properti
+                        Enter property rule details
                     </DialogDescription>
                 </DialogHeader>
 
                 <div class="grid gap-2">
-                    <Label for="title">Judul</Label>
-                    <Input id="title" v-model="form.title" placeholder="Judul" required />
+                    <Label for="title">Title</Label>
+                    <Input id="title" v-model="form.title" placeholder="Title" required />
                     <InputError :message="form.errors.title" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="description">Deskripsi</Label>
-                    <Textarea id="description" v-model="form.description" placeholder="Deskripsi" required />
+                    <Label for="description">Description</Label>
+                    <Textarea id="description" v-model="form.description" placeholder="Description" required />
                     <InputError :message="form.errors.description" />
                 </div>
                 <DialogFooter>
-                    <Button type="submit" :disabled="form.processing">Simpan</Button>
+                    <Button type="submit" :disabled="form.processing">Save</Button>
                     <DialogClose as-child>
-                        <Button variant="outline">Batal</Button>
+                        <Button variant="outline">Cancel</Button>
                     </DialogClose>
                 </DialogFooter>
             </form>

@@ -66,29 +66,29 @@ const submit = () => {
     <Dialog v-model:open="open">
         <DialogTrigger as-child>
             <Button variant="outline">
-                <Plus /> Tambah
+                <Plus /> Add
             </Button>
         </DialogTrigger>
         <DialogContent class="sm:max-w-[425px]">
             <form @submit.prevent="submit" class="space-y-6">
                 <DialogHeader>
-                    <DialogTitle>Input Unit Properti</DialogTitle>
+                    <DialogTitle>Add Property Unit</DialogTitle>
                     <DialogDescription>
-                        Masukkan unit properti
+                        Enter property unit details
                     </DialogDescription>
                 </DialogHeader>
 
                 <div class="grid gap-2">
-                    <Label for="name">Judul</Label>
-                    <Input id="name" v-model="form.name" placeholder="Judul" required />
+                    <Label for="name">Title</Label>
+                    <Input id="name" v-model="form.name" placeholder="Title" required />
                     <InputError :message="form.errors.name" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="room_id">Tipe Kamar</Label>
-                    <Select id="room_id" v-model="form.room_id" placeholder="Tipe Kamar" class="w-full" required>
+                    <Label for="room_id">Room Type</Label>
+                    <Select id="room_id" v-model="form.room_id" placeholder="Room Type" class="w-full" required>
                         <SelectTrigger class="w-full">
-                            <SelectValue placeholder="Tipe Kamar" />
+                            <SelectValue placeholder="Room Type" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem v-for="room in rooms" :key="room.id" :value="room.id">
@@ -100,15 +100,15 @@ const submit = () => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="floor">Lantai</Label>
-                    <Input id="floor" v-model="form.floor" placeholder="Lantai" required />
+                    <Label for="floor">Floor</Label>
+                    <Input id="floor" v-model="form.floor" placeholder="Floor" required />
                     <InputError :message="form.errors.floor" />
                 </div>
 
                 <DialogFooter>
-                    <Button type="submit" :disabled="form.processing">Gunakan Lokasi</Button>
+                    <Button type="submit" :disabled="form.processing">Save</Button>
                     <DialogClose as-child>
-                        <Button variant="outline">Batal</Button>
+                        <Button variant="outline">Cancel</Button>
                     </DialogClose>
                 </DialogFooter>
             </form>

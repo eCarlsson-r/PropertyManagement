@@ -5,6 +5,7 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Property } from '@/pages/properties/index.vue';
 import { index as propertiesIndex } from '@/routes/properties';
 
@@ -36,10 +37,10 @@ const emit = defineEmits<{
 <template>
     <form @submit.prevent="emit('submit')" class="space-y-6">
         <div class="grid gap-2">
-            <Label for="property_id">Properti</Label>
+            <Label for="property_id">Property</Label>
             <Select v-model="form.property_id">
-                <SelectTrigger>
-                    <SelectValue placeholder="Properti" />
+                <SelectTrigger class="w-full">
+                    <SelectValue placeholder="Property" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem v-for="property in properties" :key="property.id" :value="property.id">
@@ -51,8 +52,8 @@ const emit = defineEmits<{
         </div>
 
         <div class="grid gap-2">
-            <Label for="name">Nama Tipe Kamar</Label>
-            <Input id="name" v-model="form.name" placeholder="Nama Tipe Kamar" required />
+            <Label for="name">Room Type Name</Label>
+            <Input id="name" v-model="form.name" placeholder="Room Type Name" required />
             <InputError :message="form.errors.name" />
         </div>
 
@@ -63,39 +64,39 @@ const emit = defineEmits<{
         </div>
 
         <div class="grid gap-2">
-            <Label for="daily_price">Harga Harian</Label>
-            <Input id="daily_price" v-model="form.daily_price" placeholder="Harga Harian" required />
+            <Label for="daily_price">Daily Price</Label>
+            <Input id="daily_price" v-model="form.daily_price" placeholder="Daily Price" required />
             <InputError :message="form.errors.daily_price" />
         </div>
 
         <div class="grid gap-2">
-            <Label for="weekly_price">Harga Mingguan</Label>
-            <Input id="weekly_price" v-model="form.weekly_price" placeholder="Harga Mingguan" required />
+            <Label for="weekly_price">Weekly Price</Label>
+            <Input id="weekly_price" v-model="form.weekly_price" placeholder="Weekly Price" required />
             <InputError :message="form.errors.weekly_price" />
         </div>
 
         <div class="grid gap-2">
-            <Label for="monthly_price">Harga Bulanan</Label>
-            <Input id="monthly_price" v-model="form.monthly_price" placeholder="Harga Bulanan" required />
+            <Label for="monthly_price">Monthly Price</Label>
+            <Input id="monthly_price" v-model="form.monthly_price" placeholder="Monthly Price" required />
             <InputError :message="form.errors.monthly_price" />
         </div>
 
         <div class="grid gap-2">
-            <Label for="annual_price">Harga Tahunan</Label>
-            <Input id="annual_price" v-model="form.annual_price" placeholder="Harga Tahunan" required />
+            <Label for="annual_price">Annual Price</Label>
+            <Input id="annual_price" v-model="form.annual_price" placeholder="Annual Price" required />
             <InputError :message="form.errors.annual_price" />
         </div>
 
         <div class="grid gap-2">
-            <Label for="notes">Catatan</Label>
-            <Input id="notes" v-model="form.notes" placeholder="Catatan properti" />
+            <Label for="notes">Notes</Label>
+            <Input id="notes" v-model="form.notes" placeholder="Property notes" />
             <InputError :message="form.errors.notes" />
         </div>
 
         <div class="flex items-center gap-4">
             <Button :disabled="form.processing">{{ submitLabel }}</Button>
             <Button variant="outline" as-child>
-                <Link :href="propertiesIndex.url()">Batal</Link>
+                <Link :href="propertiesIndex.url()">Cancel</Link>
             </Button>
             <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
                 leave-active-class="transition ease-in-out" leave-to-class="opacity-0">

@@ -41,7 +41,7 @@ const handleSelect = (country: any) => {
                     <span v-html="Flags[selectedCountry.alpha2 as keyof typeof Flags]" :alt="selectedCountry.name"
                         class="w-6"></span>
                     <span>{{ attribute === 'code' ? selectedCountry.countryCallingCodes[0] : selectedCountry.name
-                        }}</span>
+                    }}</span>
                 </div>
                 <div v-else>
                     Select Country

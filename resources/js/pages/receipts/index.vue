@@ -18,6 +18,8 @@ export interface Receipt {
     tenant?: Tenant;
     unit_id: number;
     unit: {
+        property_id: number;
+        room_id: number;
         property?: Property;
         room?: Room;
     };
@@ -28,10 +30,12 @@ export interface Receipt {
     discount_amount: number;
     discount_percent: number;
     tax: number;
+    deposit: number;
     total: number;
     down_payment: number;
     remaining: number;
     fully_paid: boolean;
+    payment_method: "cash" | "transfer";
     notes: string;
     adults: number;
     children: number;
@@ -115,11 +119,11 @@ function deleteReceipt(receipt: Receipt) {
                     <div class="flex items-center gap-2">
                         <Select v-model="dates">
                             <SelectTrigger id="dates">
-                                <SelectValue placeholder="Pilih Opsi" />
+                                <SelectValue placeholder="Select Option" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="transaction-date">Tanggal Transaksi</SelectItem>
-                                <SelectItem value="rent-start-end-date">Tanggal Mulai dan Akhir Sewa</SelectItem>
+                                <SelectItem value="transaction-date">Transaction Date</SelectItem>
+                                <SelectItem value="rent-start-end-date">Lease Start & End Date</SelectItem>
                             </SelectContent>
                         </Select>
                         <Input v-model="date" type="date" placeholder="Search receipts..." class="w-64" />

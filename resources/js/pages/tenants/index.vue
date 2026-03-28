@@ -14,17 +14,31 @@ import type { Room } from '../rooms/index.vue';
 export interface Tenant {
     id: number;
     name: string;
-    email: string;
-    phone: string;
+    country_code: string;
     mobile: string;
+    email?: string;
     unit_id: number;
     cycle: string;
-    deposit: number;
-    notes: string;
+    birth_date?: string;
+    gender?: string;
+    marital_status?: string;
+    address?: string;
+    account_bank?: string;
+    account_number?: string;
+    account_owner?: string;
+    currency: string;
+    notes?: string;
+    emergency_contact_name: string;
+    emergency_contact_relationship: string;
+    emergency_contact_country_code: string;
+    emergency_contact_mobile: string;
+    deposit?: number;
+    deposit_bank?: string;
+    deposit_number?: string;
     unit: {
-        property?: Property;
-        room?: Room;
-    };
+        property: Property;
+        room: Room;
+    }
 }
 
 interface PaginatedData<T> {
@@ -92,11 +106,11 @@ function deleteTenant(tenant: Tenant) {
                     <div class="flex items-center gap-2">
                         <Select v-model="option">
                             <SelectTrigger id="option">
-                                <SelectValue placeholder="Pilih Opsi" />
+                                <SelectValue placeholder="Select Option" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="least-days">Sisa Hari Terkecil</SelectItem>
-                                <SelectItem value="most-days">Sisa Hari Terbesar</SelectItem>
+                                <SelectItem value="least-days">Least Remaining Days</SelectItem>
+                                <SelectItem value="most-days">Most Remaining Days</SelectItem>
                                 <SelectItem value="az">A - Z</SelectItem>
                                 <SelectItem value="za">Z - A</SelectItem>
                                 <SelectItem value="az-unit">A - Z Unit</SelectItem>

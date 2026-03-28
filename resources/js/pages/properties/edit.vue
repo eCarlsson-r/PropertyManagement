@@ -9,10 +9,10 @@ import type { Unit } from '@/components/properties/UnitModal.vue';
 import UnitModal from '@/components/properties/UnitModal.vue';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { dashboard } from '@/routes';
 import { index as propertiesIndex, update as propertiesUpdate } from '@/routes/properties';
 import type { Room } from '../rooms/index.vue';
-import { Switch } from '@/components/ui/switch';
 
 interface Property {
     id: number;
