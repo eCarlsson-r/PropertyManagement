@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string("mobile");
             $table->string("email")->nullable();
             $table->foreignId("unit_id")->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->enum("cycle", ["daily", "weekly", "monthly", "annual"]);
+            $table->string("cycle");
             $table->date("birth_date")->nullable();
-            $table->enum("gender", ["male", "female"])->nullable();
-            $table->enum("marital_status", ["single", "married", "divorced", "widowed"])->nullable();
+            $table->string("gender")->nullable();
+            $table->string("marital_status")->nullable();
             $table->string("address")->nullable();
             $table->string("account_bank")->nullable();
             $table->string("account_number")->nullable();

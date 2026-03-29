@@ -1,16 +1,26 @@
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
 import axios from 'axios'
+import { ref } from 'vue'
 
-const query = ref('')
-const type = ref('tenants')
-const loading = ref(false)
-const result = ref(null)
-const context = ref([])
-const error = ref(null)
+interface ContextItem {
+    id: number;
+    name?: string;
+    title?: string;
+    notes?: string;
+    description?: string;
+}
+
+const query = ref('');
+const type = ref('tenants');
+const loading = ref(false);
+const result = ref<string | null>(null);
+const context = ref<ContextItem[]>([]);
+const error = ref<string | null>(null);
 
 const runInsight = async () => {
-    if (!query.value) return
+    if (!query.value) {
+        return
+    }
 
     loading.value = true
     result.value = null
@@ -18,15 +28,19 @@ const runInsight = async () => {
     error.value = null
 
     try {
-        const response = await axios.post('/api/ai-insight', {
+        const response = await axios.post<{
+            insight: string;
+            context_used: ContextItem[];
+        }>('/api/ai-insight', {
             query: query.value,
             type: type.value
-        })
+        });
 
-        result.value = response.data.insight
-        context.value = response.data.context_used
+        result.value = response.data.insight;
+        context.value = response.data.context_used;
     } catch (e) {
-        error.value = 'We couldn’t generate insights right now. Please try again.'
+        console.error(e)
+        error.value = 'We could not generate insights right now. Please try again.'
     } finally {
         loading.value = false
     }
