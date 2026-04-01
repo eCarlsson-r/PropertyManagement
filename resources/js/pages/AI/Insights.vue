@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import axios from 'axios'
 import { ref } from 'vue'
 
 interface ContextItem {
@@ -28,16 +27,30 @@ const runInsight = async () => {
     error.value = null
 
     try {
-        const response = await axios.post<{
-            insight: string;
-            context_used: ContextItem[];
-        }>('/api/ai-insight', {
-            query: query.value,
-            type: type.value
+        const response = await fetch('/api/ai-insight', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                query: query.value,
+                type: type.value
+            })
         });
 
-        result.value = response.data.insight;
-        context.value = response.data.context_used;
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = (await response.json()) as {
+            insight: string;
+            context_used: ContextItem[];
+        };
+
+        result.value = data.insight;
+        context.value = data.context_used;
     } catch (e) {
         console.error(e)
         error.value = 'We could not generate insights right now. Please try again.'

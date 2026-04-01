@@ -1,126 +1,93 @@
-<div align="center">
-  <img src="public/images/banner.png" alt="Property Management Dashboard" width="100%" />
+# 🏙️ UrusProperti
 
-  # 🏠 Property Management Dashboard
+**Empowering Property Owners with Intelligence, Precision, and Visual Excellence.**
 
-  **Modern, Intelligent, and Sleek Property Management System**
-
-  [![Laravel](https://img.shields.io/badge/Laravel-12.0-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
-  [![Vue3](https://img.shields.io/badge/Vue.js-3.5-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org)
-  [![TailwindCSS](https://img.shields.io/badge/Tailwind-4.1-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-  [![Inertia.js](https://img.shields.io/badge/Inertia-Progressive-9553E9?style=for-the-badge&logo=inertia&logoColor=white)](https://inertiajs.com)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5.2-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![Laravel 12+](https://img.shields.io/badge/Laravel-12.0-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![Vue 3.5](https://img.shields.io/badge/Vue.js-3.5-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org)
+[![Vite 6+](https://img.shields.io/badge/Vite-6.0-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
+[![Tailwind 4.1](https://img.shields.io/badge/Tailwind-4.1-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![Framer Motion](https://img.shields.io/badge/Animations-Dynamic-E91E63?style=for-the-badge&logo=framer&logoColor=white)](https://framer.com/motion)
 
   <p align="center">
-    A state-of-the-art property management solution built with efficiency and user experience in mind. 
-    Manage properties, tenants, and finances with precision and ease.
+    <b>UrusProperti</b> isn't just another dashboard; it's a high-performance management ecosystem. 
+    Designed for professional property managers who demand real-time insights, peak operational efficiency, 
+    and a world-class user experience.
   </p>
 
-  [Features](#-key-features) • [Tech Stack](#-tech-stack) • [Setup](#-installation--setup) • [AI Insights](#-ai--intelligence)
+[Live Experience](#) • [Technical Architecture](#-technical-architecture) • [Business Value](#-business-value) • [The Vision](#-the-vision)
+
 </div>
 
 ---
 
-## 🚀 Key Features
+## 💎 why UrusProperti?
 
-### 🏢 Property & Unit Management
-Full-cycle management of your real estate portfolio. Track properties, locations, and individual units/rooms with a clean, responsive interface.
+In an industry often bogged down by legacy software, **UrusProperti** stands out by combining **Enterprise-Grade Stability** with **Startup-Level Innovation**.
 
-### 👥 Tenant & Lease Tracking
-Stay on top of your tenant relationships. Manage leases, track start and end dates, and monitor tenant status in real-time.
+### 💼 For Property Owners & Customers
 
-### 💰 Financial Management
-Comprehensive tracking of **Receipts** and **Expenses**. Maintain accurate financial records for each property and unit to ensure profitability.
+- **Real-Time Financial Transparency**: monitor every rupiah with automated receipting and expense tracking.
+- **Occupancy Optimization**: utilize data-driven insights to minimize vacancy rates and maximize yield (ARR).
+- **Maintenance Command center**: never miss a repair. Track, assign, and resolve property issues before they impact tenant satisfaction.
+- **AI-Driven Forecasting**: predict future trends using our integrated intelligence modules.
 
-### 🤖 AI-Powered Intelligence
-- **Semantic Search**: Find information naturally across your entire database.
-- **AI Insights**: Generate data-driven insights and reports to optimize your property management strategy.
+### 💻 For Recruiters & Technical Peers
 
-### 🔒 Secure by Default
-Built on **Laravel Fortify**, providing robust authentication, registration, and session management.
-
----
-
-## 🛠 Tech Stack
-
-| Category | Technology |
-| :--- | :--- |
-| **Backend** | **Laravel 12**, PHP 8.2+ |
-| **Frontend** | **Vue.js 3** (Composition API) |
-| **Styling** | **Tailwind CSS 4**, Shadcn-Vue |
-| **Communication** | **Inertia.js**, Axios |
-| **Architecture** | **TypeScript**, MVC, Repository Pattern |
-| **Auth** | **Laravel Fortify** |
+- **Clean Architecture**: built on a modern Laravel/Inertia/Vue stack with strict TypeScript typing.
+- **State-of-the-Art UI/UX**: leverages **Shadcn-Vue** and **Tailwind 4.1** to deliver a "Glassmorphism" aesthetic that rivals industry leaders.
+- **Intelligent Features**: implementation of **Semantic Search** and **AI Insights** showcasing proficiency in modern AI integration patterns.
+- **Scalable Design**: use of Repository patterns, modular components, and optimized database queries (Eloquent ORM).
 
 ---
 
-## ⚙️ Installation & Setup
+## 🛠 Technical Architecture
 
-Get your project up and running in minutes.
+Herd is engineered for performance. Every decision, from the choice of **Laravel 12** to the **Vite 6** build system, was made to ensure sub-second response times and a seamless "Single Page App" feel.
 
-### 1. Clone & Install
+- **Frontend**: Vue 3.5 (Composition API) + Inertia.js (Bridge)
+- **Backend**: Laravel 12 (Core) + Fortify (Authentication)
+- **Styles**: Tailwind CSS 4 + Shadcn-Vue (UI Framework)
+- **Intelligence**: Integrated AI modules for Semantic Analysis and Reporting
+- **Database**: PostgreSQL/MySQL optimized with specialized Indexing for rapid data retrieval
+
+---
+
+## 🎨 Visual Excellence & Aesthetic
+
+> "We don't just build tools; we build experiences."
+
+The dashboard follows a **Neo-Professional Dark Mode** philosophy. Inspired by high-end financial terminals and modern AI platforms, the interface features:
+
+- **Glassmorphism Components**: high-blur backgrounds with subtle border gradients.
+- **Neon Accents**: high-contrast cyan and purple highlights for critical data points.
+- **Dynamic Micro-Animations**: smooth, non-intrusive transitions using Vue transitions and CSS hardware acceleration.
+
+---
+
+## 🚀 Getting Started
+
+Experience the future of property management on your local machine.
+
 ```bash
-git clone <your-repo-ui>
-cd property
-composer install
-npm install
-```
+# Clone the repository
+git clone <your-repo-link> && cd property
 
-### 2. Configure Environment
-```bash
-cp .env.example .env
-php artisan key:generate
-```
+# Install dependencies
+composer install && npm install
 
-### 3. Database Migration
-```bash
-# Ensure your .env has correct database credentials
+# Environment setup
+cp .env.example .env && php artisan key:generate
+
+# Database & Data Initialization
 php artisan migrate --seed
-```
 
-### 4. Run Development Server
-```bash
-# Runs both Laravel and Vite concurrently
+# Launch the ecosystem
 npm run dev
 ```
 
 ---
 
-## 📂 Project Structure
-
-```text
-├── app/                  # Laravel Core (Models, Controllers, Services)
-├── database/            # Migrations, Seeders, Factories
-├── resources/js/        # Vue.js Components & Pages
-│   ├── Components/      # Shared Components (Shadcn UI)
-│   ├── Pages/           # Inertia Page Components
-│   └── Layouts/         # Application Layouts
-├── routes/              # Web, API, and Settings routes
-├── config/              # Application Configuration
-└── public/              # Static Assets (Images, Banner)
-```
-
----
-
-## ✨ AI & Intelligence
-
-This application leverages modern AI patterns to enhance the management experience:
-
-- **Semantic Search**: Uses vector-like logic to find properties and tenants based on context, not just keywords.
-- **Instant Insights**: One-click generation of performance metrics and property health reports.
-
----
-
-## 🎨 UI/UX Design
-
-The project uses a premium design system powered by **Shadcn-Vue** and **Tailwind CSS**. 
-- **Dark Mode Support**: Deep, modern aesthetic for prolonged usage.
-- **Glassmorphism**: Subtle translucency and depth across the interface.
-- **Micro-animations**: Smooth transitions and hover effects for a premium feel.
-
----
-
 <div align="center">
-  <p>Built with ❤️ for modern property managers.</p>
-  <p>© 2026 Herd Property. All rights reserved.</p>
+  <p><b>Designed by</b> <a href="https://github.com/eCarlsson-r">Carlsson Studio</a> | <b>Built for</b> Success</p>
+  <p>© 2026 Carlsson Studio. All rights reserved.</p>
 </div>

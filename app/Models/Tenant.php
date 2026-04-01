@@ -33,14 +33,14 @@ class Tenant extends Model
 
     protected $guarded = ["id"];
 
-    protected $model;
+    /*protected $model;
     protected $text;
 
     public function __construct($model, $text)
     {
         $this->model = $model;
         $this->text = $text;
-    }
+    }*/
 
     public function handle(EmbeddingService $service)
     {

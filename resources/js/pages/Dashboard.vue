@@ -61,24 +61,28 @@ defineOptions({
                 </Link>
             </Card>
 
-            <Card class="hover:border-primary/50 transition-colors opacity-80 cursor-not-allowed">
-                <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-sm font-medium">Schedule</CardTitle>
-                    <Calendar class="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    <div class="text-xs text-muted-foreground">Coming Soon</div>
-                </CardContent>
+            <Card class="hover:border-primary/50 transition-colors">
+                <Link href="/reports/schedule" class="block">
+                    <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle class="text-sm font-medium">Schedule</CardTitle>
+                        <Calendar class="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div class="text-xs text-muted-foreground">Property availability</div>
+                    </CardContent>
+                </Link>
             </Card>
 
-            <Card class="hover:border-primary/50 transition-colors opacity-80 cursor-not-allowed">
-                <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-sm font-medium">Statistics</CardTitle>
-                    <BarChart3 class="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    <div class="text-xs text-muted-foreground">Coming Soon</div>
-                </CardContent>
+            <Card class="hover:border-primary/50 transition-colors">
+                <Link href="/reports" class="block">
+                    <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle class="text-sm font-medium">Statistics</CardTitle>
+                        <BarChart3 class="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div class="text-xs text-muted-foreground">Detailed site analytics</div>
+                    </CardContent>
+                </Link>
             </Card>
         </div>
 

@@ -28,4 +28,9 @@ class Unit extends Model
     {
         return $this->belongsTo(Room::class);
     }
+
+    public function receipts()
+    {
+        return $this->hasMany(Receipt::class);
+    }
 }

@@ -6,8 +6,10 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SemanticSearchController;
 use App\Http\Controllers\AIInsightController;
 
@@ -16,7 +18,7 @@ Route::inertia('/', 'Welcome', [
 ])->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('/dashboard', [ReportController::class, 'dashboard'])->name('dashboard');
     Route::resource('tenants', TenantController::class);
     Route::resource('locations', LocationController::class);
     Route::resource('properties', PropertyController::class);
@@ -26,7 +28,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/semantic-search', [SemanticSearchController::class, 'search']);
     Route::post('/ai-insight', [AIInsightController::class, 'generate']);
     Route::get('/ai/insights', function () {
-        return Inertia::render('AI/Insights');
+        return Inertia\Inertia::render('AI/Insights');
+    });
+
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', function () {
+            return Inertia\Inertia::render('reports/Index', [
+                'properties' => App\Models\Property::all()
+            ]);
+        })->name('index');
+
+        // Data API for Reports
+        Route::get('/stats', [ReportController::class, 'stats'])->name('api.stats');
+        Route::get('/finance-data', [ReportController::class, 'finance'])->name('api.finance');
+        Route::get('/profit-loss-data', [ReportController::class, 'profitLoss'])->name('api.profit-loss');
+        Route::get('/occupancy', [ReportController::class, 'occupancy'])->name('occupancy');
+        Route::get('/schedule', [ReportController::class, 'schedule'])->name('schedule');
+        Route::get('/financial', [ReportController::class, 'financial'])->name('financial');
     });
 });
 
