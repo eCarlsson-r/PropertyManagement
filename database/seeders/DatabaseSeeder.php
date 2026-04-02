@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
                     ["name" => "Kamar AC Emerald", "price" => 1800000, "count" => 12, "area" => 24],
                     ["name" => "Kamar Non AC Sapphire", "price" => 950000, "count" => 18, "area" => 18]
                 ],
-                "expense_cats" => ['electricity', 'water', 'cleaning', 'garbage']
+                "expense_cats" => ['electricity', 'water', 'others']
             ],
             [
                 "name" => "The Sudirman Executive",
@@ -56,7 +56,7 @@ class DatabaseSeeder extends Seeder
                     ["name" => "Royal Two Bedroom", "price" => 12000000, "count" => 5, "area" => 85],
                     ["name" => "Presidential Suite", "price" => 25000000, "count" => 2, "area" => 150]
                 ],
-                "expense_cats" => ['security', 'elevator', 'internet', 'maintenance', 'insurance']
+                "expense_cats" => ['fixing', 'electricity', 'supplies', 'others']
             ],
             [
                 "name" => "Urus Villa Bali Eco",
@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
                 "rooms" => [
                     ["name" => "Infinity Pool Villa", "price" => 3500000, "count" => 6, "area" => 220, "is_daily" => true]
                 ],
-                "expense_cats" => ['pool_service', 'garden', 'staff_salary', 'guest_supplies']
+                "expense_cats" => ['water', 'electricity', 'salary', 'supplies']
             ]
         ];
 

@@ -51,8 +51,7 @@ function submit() {
     <Head title="Edit Expense" />
 
     <AppContent>
-        <div class="max-w-3xl mx-auto py-8">
-            <Card>
+        <Card>
                 <CardHeader>
                     <CardTitle>Edit Expense</CardTitle>
                 </CardHeader>
@@ -61,6 +60,5 @@ function submit() {
                         @submit="submit" />
                 </CardContent>
             </Card>
-        </div>
     </AppContent>
 </template>

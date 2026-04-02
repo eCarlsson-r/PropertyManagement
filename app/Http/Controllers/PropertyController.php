@@ -88,7 +88,12 @@ class PropertyController extends Controller
             "notes" => "nullable",
         ]);
 
-        $property->update($request->all());
+        $property->update($request->except("location"));
+
+        Location::updateOrCreate(
+            ["property_id" => $property->id],
+            $request->location
+        );
 
         return redirect()->route("properties.index");
     }

@@ -171,18 +171,54 @@
     }
 }
 
-@layer utilities {
-    .glass {
-        @apply border border-white/10 bg-background/60 backdrop-blur-md dark:border-white/5;
+@utility glass {
+    @apply border border-white/10 bg-background/60 backdrop-blur-md dark:border-white/5;
+}
+
+@utility neon-glow {
+    box-shadow:
+        0 0 15px -3px var(--color-primary),
+        0 0 6px -2px var(--color-primary);
+}
+
+@utility accent-glow {
+    box-shadow:
+        0 0 15px -3px var(--color-accent),
+        0 0 6px -2px var(--color-accent);
+}
+
+@layer components {
+    /* Unified Card Styling */
+    [data-slot='card'] {
+        @apply glass border-white/5 shadow-2xl transition-all duration-300;
+        &:hover {
+            @apply border-primary/20 shadow-primary/5;
+        }
     }
-    .neon-glow {
-        box-shadow:
-            0 0 15px -3px var(--color-primary),
-            0 0 6px -2px var(--color-primary);
+
+    [data-slot='card-header'] {
+        @apply mb-0 border-b border-white/5 py-6;
     }
-    .accent-glow {
-        box-shadow:
-            0 0 15px -3px var(--color-accent),
-            0 0 6px -2px var(--color-accent);
+
+    [data-slot='card-content'] {
+        @apply py-6;
+    }
+
+    /* Unified Table Styling */
+    table {
+        @apply border-separate border-spacing-0;
+    }
+
+    th {
+        @apply bg-muted/20 text-xs font-bold tracking-widest text-muted-foreground uppercase;
+    }
+
+    tr {
+        @apply border-b border-white/5 transition-colors;
+    }
+
+    /* Sidebar Enhancements */
+    [data-slot='sidebar-menu-button'][data-active='true'] {
+        @apply bg-primary/10 text-primary shadow-[0_0_15px_-3px_var(--color-primary)];
     }
 }

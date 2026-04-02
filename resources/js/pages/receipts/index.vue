@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-import AppContent from '@/components/AppContent.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardAction, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -111,102 +110,98 @@ function deleteReceipt(receipt: Receipt) {
 
     <Head title="Receipts List" />
 
-    <AppContent>
-        <Card>
-            <CardHeader>
-                <CardTitle>Receipts List</CardTitle>
-                <CardAction>
-                    <div class="flex items-center gap-2">
-                        <Select v-model="dates">
-                            <SelectTrigger id="dates">
-                                <SelectValue placeholder="Select Option" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="transaction-date">Transaction Date</SelectItem>
-                                <SelectItem value="rent-start-end-date">Lease Start & End Date</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Input v-model="date" type="date" placeholder="Search receipts..." class="w-64" />
-                        <Button as-child>
-                            <Link :href="receiptsCreate.url()">
-                                + New Receipt
-                            </Link>
-                        </Button>
-                        <Button variant="outline" @click="router.reload()">
-                            ↻ Refresh
-                        </Button>
-                    </div>
-                </CardAction>
-            </CardHeader>
-            <CardContent>
-                <div class="overflow-x-auto rounded-md border">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="border-b bg-muted/50">
-                                <th class="px-4 py-3 text-left font-medium">Occupant</th>
-                                <th class="px-4 py-3 text-left font-medium">Property</th>
-                                <th class="px-4 py-3 text-left font-medium">Room</th>
-                                <th class="px-4 py-3 text-left font-medium">Currency</th>
-                                <th class="px-4 py-3 text-left font-medium">Start Date</th>
-                                <th class="px-4 py-3 text-left font-medium">End Date</th>
-                                <th class="px-4 py-3 text-right font-medium">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-if="receipts.data.length === 0">
-                                <td colspan="3" class="px-4 py-8 text-center text-muted-foreground">
-                                    No receipts found.
-                                </td>
-                            </tr>
-                            <tr v-for="receipt in receipts.data" :key="receipt.id"
-                                class="border-b transition-colors hover:bg-muted/50">
-                                <td class="px-4 py-3">{{ receipt.tenant?.name }}</td>
-                                <td class="px-4 py-3">{{ receipt.unit.property?.name }}</td>
-                                <td class="px-4 py-3">{{ receipt.unit.room?.name }}</td>
-                                <td class="px-4 py-3">{{ receipt.total.toLocaleString("id-ID", {
-                                    style: "currency",
-                                    currency: "IDR",
-                                    minimumFractionDigits: 0,
-                                    maximumFractionDigits: 0
-                                }) }}</td>
-                                <td class="px-4 py-3">{{ receipt.start_date }}</td>
-                                <td class="px-4 py-3">{{ receipt.end_date }}</td>
-                                <td class="px-4 py-3 text-right">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <Button variant="ghost" size="sm" as-child>
-                                            <Link :href="receiptsEdit.url(receipt.id)">
-                                                Edit
-                                            </Link>
-                                        </Button>
-                                        <Button variant="ghost" size="sm"
-                                            class="text-destructive hover:text-destructive"
-                                            @click="deleteReceipt(receipt)">
-                                            Delete
-                                        </Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+    <Card>
+        <CardHeader>
+            <CardTitle>Receipts List</CardTitle>
+            <CardAction>
+                <div class="flex items-center gap-2">
+                    <Select v-model="dates">
+                        <SelectTrigger id="dates">
+                            <SelectValue placeholder="Select Option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="transaction-date">Transaction Date</SelectItem>
+                            <SelectItem value="rent-start-end-date">Lease Start & End Date</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Input v-model="date" type="date" placeholder="Search receipts..." class="w-24" />
+                    <Button as-child>
+                        <Link :href="receiptsCreate.url()">
+                            + New Receipt
+                        </Link>
+                    </Button>
+                    <Button variant="outline" @click="router.reload()">
+                        ↻ Refresh
+                    </Button>
                 </div>
+            </CardAction>
+        </CardHeader>
+        <CardContent>
+            <div class="overflow-x-auto rounded-md">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-muted/10">
+                            <th class="px-4 py-3 text-left font-medium">Occupant</th>
+                            <th class="px-4 py-3 text-left font-medium">Property</th>
+                            <th class="px-4 py-3 text-left font-medium">Room</th>
+                            <th class="px-4 py-3 text-left font-medium">Total</th>
+                            <th class="px-4 py-3 text-left font-medium">Start Date</th>
+                            <th class="px-4 py-3 text-left font-medium">End Date</th>
+                            <th class="px-4 py-3 text-right font-medium">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="receipts.data.length === 0">
+                            <td colspan="7" class="px-4 py-8 text-center text-muted-foreground">
+                                No receipts found.
+                            </td>
+                        </tr>
+                        <tr v-for="receipt in receipts.data" :key="receipt.id" class="hover:bg-muted/10">
+                            <td class="px-4 py-3">{{ receipt.tenant?.name }}</td>
+                            <td class="px-4 py-3">{{ receipt.unit.property?.name }}</td>
+                            <td class="px-4 py-3">{{ receipt.unit.room?.name }}</td>
+                            <td class="px-4 py-3">{{ Number(receipt.total).toLocaleString("id-ID", {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0
+                            }) }}</td>
+                            <td class="px-4 py-3">{{ receipt.start_date }}</td>
+                            <td class="px-4 py-3">{{ receipt.end_date }}</td>
+                            <td class="px-4 py-3 text-right">
+                                <div class="flex items-center justify-end gap-1">
+                                    <Button variant="ghost" size="sm" as-child>
+                                        <Link :href="receiptsEdit.url(receipt.id)">
+                                            Edit
+                                        </Link>
+                                    </Button>
+                                    <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive"
+                                        @click="deleteReceipt(receipt)">
+                                        Delete
+                                    </Button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                <!-- Pagination -->
-                <div v-if="receipts.last_page > 1" class="mt-4 flex items-center justify-between">
-                    <p class="text-sm text-muted-foreground">
-                        Showing page {{ receipts.current_page }} of {{ receipts.last_page }}
-                        ({{ receipts.total }} total)
-                    </p>
-                    <div class="flex items-center gap-1">
-                        <template v-for="link in receipts.links" :key="link.label">
-                            <Button v-if="link.url" variant="outline" size="sm"
-                                :class="{ 'bg-primary text-primary-foreground': link.active }" as-child>
-                                <Link :href="link.url">{{ link.label }}</Link>
-                            </Button>
-                            <Button v-else variant="outline" size="sm" disabled>{{ link.label }}</Button>
-                        </template>
-                    </div>
+            <!-- Pagination -->
+            <div v-if="receipts.last_page > 1" class="mt-4 flex items-center justify-between">
+                <p class="text-sm text-muted-foreground">
+                    Showing page {{ receipts.current_page }} of {{ receipts.last_page }}
+                    ({{ receipts.total }} total)
+                </p>
+                <div class="flex items-center gap-1">
+                    <template v-for="link in receipts.links" :key="link.label">
+                        <Button v-if="link.url" variant="outline" size="sm"
+                            :class="{ 'bg-primary text-primary-foreground': link.active }" as-child>
+                            <Link :href="link.url">{{ link.label }}</Link>
+                        </Button>
+                        <Button v-else variant="outline" size="sm" disabled>{{ link.label }}</Button>
+                    </template>
                 </div>
-            </CardContent>
-        </Card>
-    </AppContent>
+            </div>
+        </CardContent>
+    </Card>
 </template>

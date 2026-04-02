@@ -3,7 +3,6 @@ import { Head, Link } from '@inertiajs/vue3';
 import { currencies } from 'country-data-list';
 import {
     ArrowRight,
-    BarChart3,
     Building2,
     Calendar,
     PieChart,
@@ -229,16 +228,5 @@ const reportCards = [
                 </Card>
             </Link>
         </div>
-
-        <!-- History Placeholder -->
-        <Card class="bg-neutral-50/50 dark:bg-neutral-900/50 border-dashed border-2">
-            <CardContent class="py-12 flex flex-col items-center justify-center text-center opacity-60">
-                <BarChart3 class="h-12 w-12 mb-4 text-muted-foreground" />
-                <h3 class="text-lg font-medium">No recent trends to display</h3>
-                <p class="text-sm text-muted-foreground max-w-xs">
-                    Trend data will be automatically generated once more transactions are recorded in the system.
-                </p>
-            </CardContent>
-        </Card>
     </div>
 </template>

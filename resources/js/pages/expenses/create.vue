@@ -44,23 +44,18 @@ function submit() {
 </script>
 
 <template>
+
     <Head title="New Expense" />
 
     <AppContent>
-        <div class="max-w-3xl mx-auto py-8">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Record New Expense</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <ExpenseForm 
-                        v-model:form="form" 
-                        :properties="properties" 
-                        submit-label="Catat Pengeluaran" 
-                        @submit="submit" 
-                    />
-                </CardContent>
-            </Card>
-        </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Record New Expense</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ExpenseForm v-model:form="form" :properties="properties" submit-label="Catat Pengeluaran"
+                    @submit="submit" />
+            </CardContent>
+        </Card>
     </AppContent>
 </template>

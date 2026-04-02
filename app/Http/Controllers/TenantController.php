@@ -19,12 +19,16 @@ class TenantController extends Controller
         $tenants = Tenant::query()
             ->with('unit.property', 'unit.room')
             ->when($search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('mobile', 'like', "%{$search}%")
-                    ->orWhere('unit.name', 'like', "%{$search}%")
-                    ->orWhere('unit.property.name', 'like', "%{$search}%")
-                    ->orWhere('unit.room.name', 'like', "%{$search}%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('mobile', 'like', "%{$search}%")
+                        ->orWhereHas('unit', function ($uq) use ($search) {
+                            $uq->where('name', 'like', "%{$search}%")
+                                ->orWhereHas('property', fn ($pq) => $pq->where('name', 'like', "%{$search}%"))
+                                ->orWhereHas('room', fn ($rq) => $rq->where('name', 'like', "%{$search}%"));
+                        });
+                });
             })
             ->when($option, function ($query, $option) {
                 if ($option === 'least-days') {

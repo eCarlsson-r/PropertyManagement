@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import AppContent from '@/components/AppContent.vue';
 import type { Unit } from '@/components/properties/UnitModal.vue';
 import ReceiptForm from '@/components/receipts/ReceiptForm.vue';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -68,17 +67,13 @@ function submit() {
 
     <Head title="New Receipt" />
 
-    <AppContent>
-        <div class="max-w-5xl mx-auto py-8">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Create New Receipt</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <ReceiptForm v-model:form="form" :tenants="tenants" :properties="properties" :units="units"
-                        submit-label="Create Receipt" @submit="submit" />
-                </CardContent>
-            </Card>
-        </div>
-    </AppContent>
+    <Card>
+        <CardHeader>
+            <CardTitle>Create New Receipt</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <ReceiptForm v-model:form="form" :tenants="tenants" :properties="properties" :units="units"
+                submit-label="Create Receipt" @submit="submit" />
+        </CardContent>
+    </Card>
 </template>

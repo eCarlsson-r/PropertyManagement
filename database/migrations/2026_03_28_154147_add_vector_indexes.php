@@ -6,32 +6,36 @@ use Illuminate\Support\Facades\DB;
 return new class extends Migration {
     public function up(): void
     {
-        DB::statement("
-            CREATE INDEX tenants_embedding_idx
-            ON tenants USING ivfflat (embedding vector_cosine_ops);
-        ");
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement("
+                CREATE INDEX tenants_embedding_idx
+                ON tenants USING ivfflat (embedding vector_cosine_ops);
+            ");
 
-        DB::statement("
-            CREATE INDEX expenses_embedding_idx
-            ON expenses USING ivfflat (embedding vector_cosine_ops);
-        ");
+            DB::statement("
+                CREATE INDEX expenses_embedding_idx
+                ON expenses USING ivfflat (embedding vector_cosine_ops);
+            ");
 
-        DB::statement("
-            CREATE INDEX properties_embedding_idx
-            ON properties USING ivfflat (embedding vector_cosine_ops);
-        ");
+            DB::statement("
+                CREATE INDEX properties_embedding_idx
+                ON properties USING ivfflat (embedding vector_cosine_ops);
+            ");
 
-        DB::statement("
-            CREATE INDEX rules_embedding_idx
-            ON rules USING ivfflat (embedding vector_cosine_ops);
-        ");
+            DB::statement("
+                CREATE INDEX rules_embedding_idx
+                ON rules USING ivfflat (embedding vector_cosine_ops);
+            ");
+        }
     }
 
     public function down(): void
     {
-        DB::statement('DROP INDEX IF EXISTS tenants_embedding_idx;');
-        DB::statement('DROP INDEX IF EXISTS expenses_embedding_idx;');
-        DB::statement('DROP INDEX IF EXISTS properties_embedding_idx;');
-        DB::statement('DROP INDEX IF EXISTS rules_embedding_idx;');
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement('DROP INDEX IF EXISTS tenants_embedding_idx;');
+            DB::statement('DROP INDEX IF EXISTS expenses_embedding_idx;');
+            DB::statement('DROP INDEX IF EXISTS properties_embedding_idx;');
+            DB::statement('DROP INDEX IF EXISTS rules_embedding_idx;');
+        }
     }
 };

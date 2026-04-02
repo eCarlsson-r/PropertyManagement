@@ -7,11 +7,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        DB::statement('ALTER TABLE properties ADD COLUMN embedding vector(768);');
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE properties ADD COLUMN embedding vector(768);');
+        }
     }
 
     public function down(): void
     {
-        DB::statement('ALTER TABLE properties DROP COLUMN embedding;');
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE properties DROP COLUMN embedding;');
+        }
     }
 };

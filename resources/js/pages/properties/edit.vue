@@ -148,7 +148,7 @@ function submit() {
 
         <div class="space-y-6">
             <Card>
-                <CardHeader>
+                <CardHeader class="flex justify-between">
                     <CardTitle>Property Rules</CardTitle>
                     <RuleModal v-model:rule="selectedRule" v-model:open="isRuleModalOpen" />
                 </CardHeader>
@@ -162,7 +162,7 @@ function submit() {
             </Card>
 
             <Card>
-                <CardHeader>
+                <CardHeader class="flex justify-between">
                     <CardTitle>Property Units</CardTitle>
                     <UnitModal v-model:unit="selectedUnit" v-model:open="isUnitModalOpen" :rooms="rooms ?? []" />
                 </CardHeader>

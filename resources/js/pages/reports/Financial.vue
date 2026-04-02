@@ -66,7 +66,6 @@ const refreshReport = async () => {
     isLoading.value = true;
 
     try {
-
         const queryParams = new URLSearchParams({
             property_id: selectedProperty.value,
             range: period.value.replace('last-', '') // Adjusting for controller matches (match match match)
@@ -93,6 +92,15 @@ const refreshReport = async () => {
     } finally {
         isLoading.value = false;
     }
+};
+
+const downloadReport = async () => {
+    const queryParams = new URLSearchParams({
+        property_id: selectedProperty.value,
+        range: period.value.replace('last-', '')
+    }).toString();
+
+    window.location.href = `/reports/financial/download?${queryParams}`;
 };
 
 onMounted(() => {
@@ -161,11 +169,12 @@ const pieOptions: ChartOptions<'pie'> = {
             </div>
 
             <div class="flex items-center gap-2">
-                <Button variant="outline" @click="refreshReport" :disabled="isLoading" class="h-9 glass border-white/10">
+                <Button variant="outline" @click="refreshReport" :disabled="isLoading"
+                    class="h-9 glass border-white/10">
                     <RefreshCw class="mr-2 h-4 w-4" :class="{ 'animate-spin': isLoading }" />
                     Refresh
                 </Button>
-                <Button variant="default" class="h-9 neon-glow">
+                <Button variant="default" @click="downloadReport" class="h-9 neon-glow">
                     <Download class="mr-2 h-4 w-4" />
                     Download {{ fileType.toUpperCase() }}
                 </Button>
@@ -179,7 +188,7 @@ const pieOptions: ChartOptions<'pie'> = {
                     <div class="space-y-2">
                         <label class="text-xs font-semibold uppercase text-muted-foreground">Report Type</label>
                         <Select v-model="reportType">
-                            <SelectTrigger>
+                            <SelectTrigger class="w-full">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -193,7 +202,7 @@ const pieOptions: ChartOptions<'pie'> = {
 
                     <div class="space-y-2">
                         <label class="text-xs font-semibold uppercase text-muted-foreground">Format</label>
-                        <Select v-model="fileType">
+                        <Select v-model="fileType" class="w-full">
                             <SelectTrigger>
                                 <SelectValue />
                             </SelectTrigger>
@@ -206,24 +215,25 @@ const pieOptions: ChartOptions<'pie'> = {
 
                     <div class="space-y-2">
                         <label class="text-xs font-semibold uppercase text-muted-foreground">Property</label>
-                        <Select v-model="selectedProperty">
+                        <Select v-model="selectedProperty" class="w-full">
                             <SelectTrigger>
                                 <Building2 class="mr-2 h-4 w-4 opacity-50" />
                                 <SelectValue />
                             </SelectTrigger>
-                             <SelectContent>
-                                 <SelectItem value="all">All Properties</SelectItem>
-                                 <SelectItem v-for="property in properties" :key="property.id" :value="property.id.toString()">
-                                     {{ property.name }}
-                                 </SelectItem>
-                             </SelectContent>
+                            <SelectContent>
+                                <SelectItem value="all">All Properties</SelectItem>
+                                <SelectItem v-for="property in properties" :key="property.id"
+                                    :value="property.id.toString()">
+                                    {{ property.name }}
+                                </SelectItem>
+                            </SelectContent>
                         </Select>
                     </div>
 
                     <div class="space-y-2">
                         <label class="text-xs font-semibold uppercase text-muted-foreground">Period</label>
                         <Select v-model="period">
-                            <SelectTrigger>
+                            <SelectTrigger class="w-full">
                                 <CalendarDays class="mr-2 h-4 w-4 opacity-50" />
                                 <SelectValue />
                             </SelectTrigger>
@@ -246,7 +256,8 @@ const pieOptions: ChartOptions<'pie'> = {
                     <CardTitle class="text-xs font-bold uppercase tracking-widest text-primary">Total Income</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div class="text-3xl font-black tracking-tight">Rp {{ financialData.total_income.toLocaleString() }}</div>
+                    <div class="text-3xl font-black tracking-tight">Rp {{ financialData.total_income.toLocaleString() }}
+                    </div>
                     <div class="flex items-center text-[10px] uppercase font-bold text-emerald-400 mt-2">
                         <ArrowUpRight class="mr-1 h-3 w-3" />
                         Live tracking
@@ -256,10 +267,12 @@ const pieOptions: ChartOptions<'pie'> = {
 
             <Card class="glass group hover:accent-glow transition-all duration-300 border-accent/20">
                 <CardHeader class="pb-2">
-                    <CardTitle class="text-xs font-bold uppercase tracking-widest text-accent">Operating Expenses</CardTitle>
+                    <CardTitle class="text-xs font-bold uppercase tracking-widest text-accent">Operating Expenses
+                    </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div class="text-3xl font-black tracking-tight">Rp {{ financialData.total_expense.toLocaleString() }}</div>
+                    <div class="text-3xl font-black tracking-tight">Rp {{ financialData.total_expense.toLocaleString()
+                        }}</div>
                     <div class="flex items-center text-[10px] uppercase font-bold text-rose-400 mt-2">
                         <ArrowDownRight class="mr-1 h-3 w-3" />
                         Live tracking
@@ -267,12 +280,15 @@ const pieOptions: ChartOptions<'pie'> = {
                 </CardContent>
             </Card>
 
-            <Card class="glass group border-emerald-500/20 hover:shadow-[0_0_20px_-5px_rgba(16,185,129,0.3)] transition-all duration-300">
+            <Card
+                class="glass group border-emerald-500/20 hover:shadow-[0_0_20px_-5px_rgba(16,185,129,0.3)] transition-all duration-300">
                 <CardHeader class="pb-2">
-                    <CardTitle class="text-xs font-bold uppercase tracking-widest text-emerald-400">Net Profit</CardTitle>
+                    <CardTitle class="text-xs font-bold uppercase tracking-widest text-emerald-400">Net Profit
+                    </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div class="text-3xl font-black tracking-tight">Rp {{ financialData.net_profit.toLocaleString() }}</div>
+                    <div class="text-3xl font-black tracking-tight">Rp {{ financialData.net_profit.toLocaleString() }}
+                    </div>
                     <div class="flex items-center text-[10px] uppercase font-bold text-emerald-400 mt-2">
                         <ArrowUpRight class="mr-1 h-3 w-3" />
                         Healthy margin

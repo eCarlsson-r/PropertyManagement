@@ -41,8 +41,8 @@ class TwoFactorChallengeTest extends TestCase
             'two_factor_confirmed_at' => now(),
         ])->save();
 
-        $this->post(route('login'), [
-            'email' => $user->email,
+        $this->post(route('login.store'), [
+            'username' => $user->username,
             'password' => 'password',
         ]);
 

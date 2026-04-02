@@ -10,7 +10,7 @@ class Expense extends Model
         "date",
         "property_id",
         "title",
-        "total",
+        "amount",
         "category",
         "notes"
     ];

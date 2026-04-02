@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-import AppContent from '@/components/AppContent.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardAction, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -98,97 +97,94 @@ function deleteTenant(tenant: Tenant) {
 
     <Head title="Tenants List" />
 
-    <AppContent>
-        <Card>
-            <CardHeader>
-                <CardTitle>Tenants List</CardTitle>
-                <CardAction>
-                    <div class="flex items-center gap-2">
-                        <Select v-model="option">
-                            <SelectTrigger id="option">
-                                <SelectValue placeholder="Select Option" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="least-days">Least Remaining Days</SelectItem>
-                                <SelectItem value="most-days">Most Remaining Days</SelectItem>
-                                <SelectItem value="az">A - Z</SelectItem>
-                                <SelectItem value="za">Z - A</SelectItem>
-                                <SelectItem value="az-unit">A - Z Unit</SelectItem>
-                                <SelectItem value="za-unit">Z - A Unit</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Input v-model="search" type="search" placeholder="Search tenants..." class="w-64" />
-                        <Button as-child>
-                            <Link :href="tenantsCreate.url()">
-                                + New Tenant
-                            </Link>
-                        </Button>
-                        <Button variant="outline" @click="router.reload()">
-                            ↻ Refresh
-                        </Button>
-                    </div>
-                </CardAction>
-            </CardHeader>
-            <CardContent>
-                <div class="overflow-x-auto rounded-md border">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="border-b bg-muted/50">
-                                <th class="px-4 py-3 text-left font-medium">Name</th>
-                                <th class="px-4 py-3 text-left font-medium">Property</th>
-                                <th class="px-4 py-3 text-left font-medium">Room</th>
-                                <th class="px-4 py-3 text-left font-medium">Billing Cycle</th>
-                                <th class="px-4 py-3 text-right font-medium">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-if="tenants.data.length === 0">
-                                <td colspan="3" class="px-4 py-8 text-center text-muted-foreground">
-                                    No tenants found.
-                                </td>
-                            </tr>
-                            <tr v-for="tenant in tenants.data" :key="tenant.id"
-                                class="border-b transition-colors hover:bg-muted/50">
-                                <td class="px-4 py-3">{{ tenant.name }}</td>
-                                <td class="px-4 py-3">{{ tenant.unit.property?.name }}</td>
-                                <td class="px-4 py-3">{{ tenant.unit.room?.name }}</td>
-                                <td class="px-4 py-3">{{ tenant.cycle }}</td>
-                                <td class="px-4 py-3 text-right">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <Button variant="ghost" size="sm" as-child>
-                                            <Link :href="tenantsEdit.url(tenant.id)">
-                                                Edit
-                                            </Link>
-                                        </Button>
-                                        <Button variant="ghost" size="sm"
-                                            class="text-destructive hover:text-destructive"
-                                            @click="deleteTenant(tenant)">
-                                            Delete
-                                        </Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+    <Card>
+        <CardHeader>
+            <CardTitle>Tenants List</CardTitle>
+            <CardAction>
+                <div class="flex items-center gap-2">
+                    <Select v-model="option">
+                        <SelectTrigger id="option">
+                            <SelectValue placeholder="Select Option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="least-days">Least Remaining Days</SelectItem>
+                            <SelectItem value="most-days">Most Remaining Days</SelectItem>
+                            <SelectItem value="az">A - Z</SelectItem>
+                            <SelectItem value="za">Z - A</SelectItem>
+                            <SelectItem value="az-unit">A - Z Unit</SelectItem>
+                            <SelectItem value="za-unit">Z - A Unit</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Input v-model="search" type="search" placeholder="Search tenants..." class="w-64" />
+                    <Button as-child>
+                        <Link :href="tenantsCreate.url()">
+                            + New Tenant
+                        </Link>
+                    </Button>
+                    <Button variant="outline" @click="router.reload()">
+                        ↻ Refresh
+                    </Button>
                 </div>
+            </CardAction>
+        </CardHeader>
+        <CardContent>
+            <div class="overflow-x-auto rounded-md">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-muted/10">
+                            <th class="px-4 py-3 text-left font-medium">Name</th>
+                            <th class="px-4 py-3 text-left font-medium">Property</th>
+                            <th class="px-4 py-3 text-left font-medium">Room</th>
+                            <th class="px-4 py-3 text-left font-medium">Billing Cycle</th>
+                            <th class="px-4 py-3 text-right font-medium">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="tenants.data.length === 0">
+                            <td colspan="5" class="px-4 py-8 text-center text-muted-foreground">
+                                No tenants found.
+                            </td>
+                        </tr>
+                        <tr v-for="tenant in tenants.data" :key="tenant.id"
+                            class="hover:bg-muted/10">
+                            <td class="px-4 py-3">{{ tenant.name }}</td>
+                            <td class="px-4 py-3">{{ tenant.unit.property?.name }}</td>
+                            <td class="px-4 py-3">{{ tenant.unit.room?.name }}</td>
+                            <td class="px-4 py-3">{{ tenant.cycle }}</td>
+                            <td class="px-4 py-3 text-right">
+                                <div class="flex items-center justify-end gap-1">
+                                    <Button variant="ghost" size="sm" as-child>
+                                        <Link :href="tenantsEdit.url(tenant.id)">
+                                            Edit
+                                        </Link>
+                                    </Button>
+                                    <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive"
+                                        @click="deleteTenant(tenant)">
+                                        Delete
+                                    </Button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                <!-- Pagination -->
-                <div v-if="tenants.last_page > 1" class="mt-4 flex items-center justify-between">
-                    <p class="text-sm text-muted-foreground">
-                        Showing page {{ tenants.current_page }} of {{ tenants.last_page }}
-                        ({{ tenants.total }} total)
-                    </p>
-                    <div class="flex items-center gap-1">
-                        <template v-for="link in tenants.links" :key="link.label">
-                            <Button v-if="link.url" variant="outline" size="sm"
-                                :class="{ 'bg-primary text-primary-foreground': link.active }" as-child>
-                                <Link :href="link.url">{{ link.label }}</Link>
-                            </Button>
-                            <Button v-else variant="outline" size="sm" disabled>{{ link.label }}</Button>
-                        </template>
-                    </div>
+            <!-- Pagination -->
+            <div v-if="tenants.last_page > 1" class="mt-4 flex items-center justify-between">
+                <p class="text-sm text-muted-foreground">
+                    Showing page {{ tenants.current_page }} of {{ tenants.last_page }}
+                    ({{ tenants.total }} total)
+                </p>
+                <div class="flex items-center gap-1">
+                    <template v-for="link in tenants.links" :key="link.label">
+                        <Button v-if="link.url" variant="outline" size="sm"
+                            :class="{ 'bg-primary text-primary-foreground': link.active }" as-child>
+                            <Link :href="link.url">{{ link.label }}</Link>
+                        </Button>
+                        <Button v-else variant="outline" size="sm" disabled>{{ link.label }}</Button>
+                    </template>
                 </div>
-            </CardContent>
-        </Card>
-    </AppContent>
+            </div>
+        </CardContent>
+    </Card>
 </template>

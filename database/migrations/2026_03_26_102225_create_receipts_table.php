@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string("discount_type");
             $table->decimal("discount_amount", 10, 2)->default(0);
             $table->decimal("discount_percent", 3, 2)->default(0);
-            $table->decimal("tax", 3, 2)->default(0);
+            $table->decimal("tax", 10, 2)->default(0);
             $table->decimal("total", 10, 2)->default(0);
             $table->decimal("down_payment", 10, 2)->default(0);
             $table->decimal("remaining", 10, 2)->default(0);

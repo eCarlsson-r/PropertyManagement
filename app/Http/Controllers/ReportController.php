@@ -14,9 +14,9 @@ class ReportController extends Controller
 {
     public function dashboard(Request $request)
     {
-        $receipts = Receipt::latest()->take(10)->get();
+        $receipts = Receipt::with(['tenant', 'unit.property'])->latest()->take(10)->get();
         return Inertia::render('Dashboard', [
-            'receipts' => $receipts,
+            'receipt_list' => $receipts,
         ]);
     }
     public function schedule(Request $request)
@@ -57,7 +57,7 @@ class ReportController extends Controller
         $occupancy = Unit::query()
             ->join('rooms as rm', 'units.room_id', '=', 'rm.id')
             ->leftJoin('receipts as rc', 'units.id', '=', 'rc.unit_id')
-            ->when($propertyId && $propertyId !== 'all', fn ($q) => $q->where('units.property_id', $propertyId))
+            ->when($propertyId && $propertyId !== 'all', fn($q) => $q->where('units.property_id', $propertyId))
             ->where('rc.start_date', '<=', $startDate->format('Y-m-d'))
             ->where('rc.end_date', '>=', $endDate->format('Y-m-d'))
             ->selectRaw("
@@ -71,7 +71,7 @@ class ReportController extends Controller
                     ELSE rm.annual_price
                 END) AS `average_rate`
             ")
-            ->first();
+            ->toSql();
 
         return Inertia::render('reports/Occupancy', [
             "occupancy" => $occupancy,

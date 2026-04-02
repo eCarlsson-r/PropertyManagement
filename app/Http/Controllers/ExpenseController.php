@@ -45,7 +45,7 @@ class ExpenseController extends Controller
             "date" => "required",
             "property_id" => "required",
             "title" => "required",
-            "total" => "required",
+            "amount" => "required",
             "category" => "required"
         ]);
 
@@ -68,7 +68,7 @@ class ExpenseController extends Controller
             "date" => "required",
             "property_id" => "required",
             "title" => "required",
-            "total" => "required",
+            "amount" => "required",
             "category" => "required"
         ]);
 
