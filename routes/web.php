@@ -26,10 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('receipts', ReceiptController::class);
     Route::resource('expenses', ExpenseController::class);
     Route::post('/semantic-search', [SemanticSearchController::class, 'search']);
-    Route::post('/ai-insight', [AIInsightController::class, 'generate']);
-    Route::get('/ai/insights', function () {
-        return Inertia\Inertia::render('AI/Insights');
-    });
+    Route::get('/ai/insights', [AIInsightController::class, 'index'])->name('ai.insights.index');
+    Route::post('/ai-insight', [AIInsightController::class, 'generate'])->name('ai.insights.generate');
 
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/', function () {
@@ -45,6 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/occupancy', [ReportController::class, 'occupancy'])->name('occupancy');
         Route::get('/schedule', [ReportController::class, 'schedule'])->name('schedule');
         Route::get('/financial', [ReportController::class, 'financial'])->name('financial');
+        Route::get('/download', [ReportController::class, 'download'])->name('download');
     });
 });
 

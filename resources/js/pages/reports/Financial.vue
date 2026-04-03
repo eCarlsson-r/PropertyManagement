@@ -22,6 +22,7 @@ import {
 } from 'lucide-vue-next';
 import { ref, onMounted, reactive, computed } from 'vue';
 import { Bar, Pie } from 'vue-chartjs';
+import * as XLSX from 'xlsx';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
@@ -60,6 +61,9 @@ const financialData = reactive({
     income_trend: [] as any[],
     expense_trend: [] as any[],
     expense_summary: [] as any[],
+    income_details: [] as any[],
+    expense_details: [] as any[],
+    active_period: { start: '', end: '' },
 });
 
 const refreshReport = async () => {
@@ -82,10 +86,13 @@ const refreshReport = async () => {
         financialData.income_trend = finance.income_trend;
         financialData.expense_trend = finance.expense_trend;
         financialData.expense_summary = finance.expense_summary;
+        financialData.active_period = finance.period;
 
         financialData.total_income = profitLoss.total_income;
         financialData.total_expense = profitLoss.total_expense;
         financialData.net_profit = profitLoss.net_profit;
+        financialData.income_details = profitLoss.income;
+        financialData.expense_details = profitLoss.expense;
 
     } catch (error) {
         console.error('Failed to fetch financial data:', error);
@@ -94,13 +101,117 @@ const refreshReport = async () => {
     }
 };
 
-const downloadReport = async () => {
-    const queryParams = new URLSearchParams({
-        property_id: selectedProperty.value,
-        range: period.value.replace('last-', '')
-    }).toString();
+const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR'
+    }).format(value);
+};
 
-    window.location.href = `/reports/financial/download?${queryParams}`;
+const downloadReport = async () => {
+    isLoading.value = true;
+
+    try {
+        const queryParams = new URLSearchParams({
+            property_id: selectedProperty.value,
+            range: period.value.replace('last-', '')
+        }).toString();
+
+        if (reportType.value === 'profit-loss') {
+            const data = financialData.income_details;
+            const expenseData = financialData.expense_details;
+            const periodStr = financialData.active_period.start 
+                ? `${new Date(financialData.active_period.start).toLocaleDateString()} - ${new Date(financialData.active_period.end).toLocaleDateString()}`
+                : period.value;
+            const title = `Profit & Loss Report (${periodStr})`;
+
+            const rows = [
+                [title],
+                [],
+                ['Income'],
+                ["Transaction Date", "Date", "Total", "Description"],
+            ];
+
+            if (data.length > 0) {
+                data.forEach((income: any) => {
+                    const roomName = income.unit?.name || 'N/A';
+                    const propName = income.unit?.property?.name || 'N/A';
+                    const occupantName = income.tenant?.name || 'N/A';
+                    const description = `Property : ${propName}, Unit : ${roomName}, Tenant : ${occupantName}`;
+
+                    rows.push([
+                        new Date(income.created_at).toLocaleDateString(),
+                        `${income.start_date} to ${income.end_date}`,
+                        formatCurrency(income.total),
+                        income.total === income.remaining ? description : `${description}, Down Payment : ${formatCurrency(income.total - income.remaining)}, Remaining : ${formatCurrency(income.remaining)}`
+                    ]);
+                });
+            }
+
+            rows.push([], [], ['Expense'], ["Date", "Total", "Description"]);
+
+            if (expenseData.length > 0) {
+                expenseData.forEach((expense: any) => {
+                    rows.push([expense.date, formatCurrency(expense.amount), expense.description]);
+                });
+            }
+
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(rows);
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Profit & Loss");
+
+            if (fileType.value === 'csv') {
+                XLSX.writeFile(workbook, `${title}.csv`, { bookType: "csv" });
+            } else {
+                XLSX.writeFile(workbook, `${title}.xlsx`, { compression: true });
+            }
+        } else if (reportType.value === 'income-history') {
+            // For income history, we fetch specific data
+            const res = await fetch(`/reports/profit-loss-data?${queryParams}`);
+            const response = await res.json();
+            const incomeData = response.income;
+            const periodStr = financialData.active_period.start 
+                ? `${new Date(financialData.active_period.start).toLocaleDateString()} - ${new Date(financialData.active_period.end).toLocaleDateString()}`
+                : period.value;
+            const title = `Income History (${periodStr})`;
+
+            const rows = [
+                [title],
+                [],
+                ['Income'],
+                ["Transaction Date", "Check-in & Check-out Date", "Unit", "Price", "Name", "Email", "Mobile", "Total"],
+            ];
+
+            if (incomeData.length > 0) {
+                incomeData.forEach((income: any) => {
+                    rows.push([
+                        new Date(income.created_at).toLocaleDateString(),
+                        `${income.start_date} to ${income.end_date}`,
+                        income.unit?.name || 'N/A',
+                        formatCurrency(income.total),
+                        income.tenant?.name || 'N/A',
+                        income.tenant?.email || 'N/A',
+                        income.tenant?.mobile || 'N/A',
+                        formatCurrency(income.total)
+                    ]);
+                });
+            }
+
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(rows);
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Income History");
+
+            if (fileType.value === 'csv') {
+                XLSX.writeFile(workbook, `${title}.csv`, { bookType: "csv" });
+            } else {
+                XLSX.writeFile(workbook, `${title}.xlsx`, { compression: true });
+            }
+        }
+    } catch (error) {
+        console.error('Download failed:', error);
+    } finally {
+        isLoading.value = false;
+    }
 };
 
 onMounted(() => {
@@ -194,8 +305,6 @@ const pieOptions: ChartOptions<'pie'> = {
                             <SelectContent>
                                 <SelectItem value="profit-loss">Profit & Loss Report</SelectItem>
                                 <SelectItem value="income-history">Income History</SelectItem>
-                                <SelectItem value="income-source">Income Sources</SelectItem>
-                                <SelectItem value="expense-source">Expense Sources</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

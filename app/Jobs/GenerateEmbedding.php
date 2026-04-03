@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Services\EmbeddingService;
 use Illuminate\Foundation\Queue\Queueable;
 
 class GenerateEmbedding implements ShouldQueue

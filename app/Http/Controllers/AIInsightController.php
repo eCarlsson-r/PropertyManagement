@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Http;
 
 class AIInsightController extends Controller
 {
+
+    public function index()
+    {
+        return inertia('AI/Insights');
+    }
+
     public function generate(Request $request, EmbeddingService $embeddingService)
     {
         $request->validate([
@@ -19,7 +25,7 @@ class AIInsightController extends Controller
         $embedding = $embeddingService->generate($request->query);
 
         if (!$embedding) {
-            return response()->json(['error' => 'Embedding failed'], 500);
+            return back()->withErrors(['query' => 'Embedding failed']);
         }
 
         $vector = '[' . implode(',', $embedding) . ']';
@@ -39,8 +45,9 @@ class AIInsightController extends Controller
         // Step 4 — Call Gemini (Vertex AI)
         $response = $this->callGemini("Analyze and provide insights: " . $request->query, $context);
 
-        return response()->json([
+        return inertia('AI/Insights', [
             'query' => $request->query,
+            'type' => $request->type,
             'context_used' => $records,
             'insight' => $response
         ]);
@@ -107,19 +114,18 @@ IMPORTANT:
 - Focus on practical decisions
 ";
 
-        $response = Http::withToken(config('services.vertex.token'))
-            ->post('https://us-central1-aiplatform.googleapis.com/v1/projects/YOUR_PROJECT/locations/us-central1/publishers/google/models/gemini-pro:generateContent', [
-                'contents' => [
-                    [
-                        'parts' => [
-                            ['text' => $prompt]
-                        ]
+        $response = Http::post('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . config('services.gemini.key'), [
+            'contents' => [
+                [
+                    'parts' => [
+                        ['text' => $prompt]
                     ]
-                ],
-                "generationConfig" => [
-                    "temperature" => 0.2
                 ]
-            ]);
+            ],
+            "generationConfig" => [
+                "temperature" => 0.2
+            ]
+        ]);
 
         return $response->json()['candidates'][0]['content']['parts'][0]['text'] ?? 'No response';
     }

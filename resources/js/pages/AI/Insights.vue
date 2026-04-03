@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import { Sparkles, Loader2, AlertCircle, Bot, Database } from 'lucide-vue-next';
-import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -15,54 +14,27 @@ interface ContextItem {
     description?: string;
 }
 
-const query = ref('');
-const type = ref('tenants');
-const loading = ref(false);
-const result = ref<string | null>(null);
-const context = ref<ContextItem[]>([]);
-const error = ref<string | null>(null);
+const props = defineProps<{
+    insight?: string;
+    context_used?: ContextItem[];
+    query?: string;
+    type?: string;
+}>();
 
-const runInsight = async () => {
-    if (!query.value) {
+const form = useForm({
+    query: props.query ?? '',
+    type: props.type ?? 'tenants'
+});
+
+const runInsight = () => {
+    if (!form.query) {
         return
     }
 
-    loading.value = true
-    result.value = null
-    context.value = []
-    error.value = null
-
-    try {
-        const response = await fetch('/api/ai-insight', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                query: query.value,
-                type: type.value
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = (await response.json()) as {
-            insight: string;
-            context_used: ContextItem[];
-        };
-
-        result.value = data.insight;
-        context.value = data.context_used;
-    } catch (e) {
-        console.error(e)
-        error.value = 'We could not generate insights right now. Please try again.'
-    } finally {
-        loading.value = false
-    }
+    form.post('/ai-insight', {
+        preserveState: true,
+        preserveScroll: true,
+    })
 }
 </script>
 
@@ -88,25 +60,25 @@ const runInsight = async () => {
             <CardContent class="pt-6">
                 <!-- Suggested Queries -->
                 <div class="flex flex-wrap gap-2 mb-4">
-                    <Button variant="secondary" size="sm" @click="query = 'Which tenants are likely to pay late?'">
+                    <Button variant="secondary" size="sm" @click="form.query = 'Which tenants are likely to pay late?'">
                         Late Payment Risk
                     </Button>
-                    <Button variant="secondary" size="sm" @click="query = 'Show unusual expenses this month'">
+                    <Button variant="secondary" size="sm" @click="form.query = 'Show unusual expenses this month'">
                         Unusual Expenses
                     </Button>
-                    <Button variant="secondary" size="sm" @click="query = 'Which properties need attention?'">
+                    <Button variant="secondary" size="sm" @click="form.query = 'Which properties need attention?'">
                         Property Issues
                     </Button>
                 </div>
 
                 <!-- Textarea -->
-                <Textarea v-model="query" placeholder="e.g. Which tenants frequently pay late or request extensions?"
+                <Textarea v-model="form.query" placeholder="e.g. Which tenants frequently pay late or request extensions?"
                     class="w-full mb-4 bg-background/50 border-white/10" rows="4" />
 
                 <!-- Controls -->
                 <div class="flex flex-wrap gap-3 items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <Select v-model="type">
+                        <Select v-model="form.type">
                             <SelectTrigger id="type" class="w-[180px]">
                                 <SelectValue placeholder="Select Data Source" />
                             </SelectTrigger>
@@ -119,21 +91,21 @@ const runInsight = async () => {
                         </Select>
 
                         <span class="text-xs text-muted-foreground flex items-center gap-1">
-                            <Database class="h-3 w-3" /> Analyzing {{ type }} data
+                            <Database class="h-3 w-3" /> Analyzing {{ form.type }} data
                         </span>
                     </div>
 
-                    <Button @click="runInsight" :disabled="loading" class="min-w-[150px]">
-                        <Loader2 v-if="loading" class="w-4 h-4 mr-2 animate-spin" />
+                    <Button @click="runInsight" :disabled="form.processing" class="min-w-[150px]">
+                        <Loader2 v-if="form.processing" class="w-4 h-4 mr-2 animate-spin" />
                         <Sparkles v-else class="w-4 h-4 mr-2" />
-                        {{ loading ? 'Analyzing...' : 'Generate Insight' }}
+                        {{ form.processing ? 'Analyzing...' : 'Generate Insight' }}
                     </Button>
                 </div>
             </CardContent>
         </Card>
 
         <!-- Loading State -->
-        <Card v-if="loading" class="border-primary/20 bg-primary/5 animate-pulse">
+        <Card v-if="form.processing" class="border-primary/20 bg-primary/5 animate-pulse">
             <CardContent class="pt-6 flex flex-col items-center justify-center py-12">
                 <Bot class="h-12 w-12 text-primary mb-4 animate-bounce" />
                 <p class="font-medium text-lg">Analyzing your data...</p>
@@ -142,15 +114,15 @@ const runInsight = async () => {
         </Card>
 
         <!-- Error State -->
-        <Card v-if="error" class="border-destructive/50 bg-destructive/10">
+        <Card v-if="form.errors.query" class="border-destructive/50 bg-destructive/10">
             <CardContent class="pt-6 flex flex-col items-center justify-center py-8">
                 <AlertCircle class="h-10 w-10 text-destructive mb-3" />
-                <p class="font-medium text-destructive">{{ error }}</p>
+                <p class="font-medium text-destructive">{{ form.errors.query }}</p>
             </CardContent>
         </Card>
 
         <!-- Empty State -->
-        <Card v-if="!result && !loading && !error"
+        <Card v-if="!insight && !form.processing"
             class="border-dashed border-2 bg-neutral-50/50 dark:bg-neutral-900/50">
             <CardContent class="pt-6 py-12 flex flex-col items-center justify-center text-center opacity-60">
                 <Sparkles class="h-12 w-12 mb-4 text-muted-foreground" />
@@ -162,14 +134,14 @@ const runInsight = async () => {
         </Card>
 
         <!-- Result -->
-        <Card v-if="result" class="glass border-primary/30 shadow-[0_0_30px_-10px_var(--color-primary)]">
+        <Card v-if="insight" class="glass border-primary/30 shadow-[0_0_30px_-10px_var(--color-primary)]">
             <CardHeader class="pb-3 border-b border-white/5">
                 <CardTitle class="flex items-center gap-2 text-primary">
                     <Bot class="h-5 w-5" /> AI Insight
                 </CardTitle>
             </CardHeader>
             <CardContent class="pt-6">
-                <p class="whitespace-pre-line text-sm leading-relaxed">{{ result }}</p>
+                <p class="whitespace-pre-line text-sm leading-relaxed">{{ insight }}</p>
                 <p
                     class="text-xs text-muted-foreground mt-4 pt-4 border-t border-white/5 flex items-center justify-end gap-1">
                     <Sparkles class="h-3 w-3" /> Generated using semantic search + AI reasoning
@@ -178,7 +150,7 @@ const runInsight = async () => {
         </Card>
 
         <!-- Context -->
-        <Card v-if="context.length" class="bg-muted/10 border-white/5">
+        <Card v-if="context_used && context_used.length" class="bg-muted/10 border-white/5">
             <CardHeader class="pb-3 border-b border-white/5 bg-muted/20">
                 <CardTitle class="text-sm">Supporting Data</CardTitle>
                 <CardDescription>Records used to generate this insight</CardDescription>
@@ -186,23 +158,23 @@ const runInsight = async () => {
             <CardContent class="pt-0 px-0">
 
                 <div class="divide-y divide-white/5">
-                    <div v-for="item in context" :key="item.id" class="p-4 text-sm hover:bg-muted/10 transition-colors">
-                        <div v-if="type === 'tenants'">
+                    <div v-for="item in context_used" :key="item.id" class="p-4 text-sm hover:bg-muted/10 transition-colors">
+                        <div v-if="form.type === 'tenants'">
                             <strong class="text-foreground">{{ item.name }}</strong>
                             <p class="text-muted-foreground mt-1">{{ item.notes }}</p>
                         </div>
 
-                        <div v-else-if="type === 'expenses'">
+                        <div v-else-if="form.type === 'expenses'">
                             <strong class="text-foreground">{{ item.title }}</strong>
                             <p class="text-muted-foreground mt-1">{{ item.notes }}</p>
                         </div>
 
-                        <div v-else-if="type === 'properties'">
+                        <div v-else-if="form.type === 'properties'">
                             <strong class="text-foreground">{{ item.name }}</strong>
                             <p class="text-muted-foreground mt-1">{{ item.notes }}</p>
                         </div>
 
-                        <div v-else-if="type === 'rules'">
+                        <div v-else-if="form.type === 'rules'">
                             <strong class="text-foreground">{{ item.title }}</strong>
                             <p class="text-muted-foreground mt-1">{{ item.description }}</p>
                         </div>

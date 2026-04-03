@@ -3,18 +3,27 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Config;
 
 class EmbeddingService
 {
     public function generate($text)
     {
-        $response = Http::withToken(config('services.vertex.token'))
-            ->post('https://us-central1-aiplatform.googleapis.com/v1/projects/YOUR_PROJECT/locations/us-central1/publishers/google/models/textembedding-gecko:predict', [
-                'instances' => [
-                    ['content' => $text]
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . config('services.gemini.key'),
+            'Content-Type' => 'application/json',
+        ])->post(
+            'https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent',
+            [
+                'model' => 'models/text-embedding-004',
+                'content' => [
+                    'parts' => [
+                        ['text' => $text]
+                    ]
                 ]
-            ]);
+            ]
+        );
 
-        return $response->json()['predictions'][0]['embeddings']['values'] ?? null;
+        return $response->json()['embedding']['values'] ?? null;
     }
 }

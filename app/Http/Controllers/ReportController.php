@@ -86,7 +86,6 @@ class ReportController extends Controller
         ]);
     }
 
-
     /**
      * Overview Statistics for Report Index
      */
