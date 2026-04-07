@@ -43,32 +43,39 @@ class GenerateEmbeddings extends Command
             $text = $textBuilder($row);
             $embedding = $this->getEmbedding($text);
 
-            DB::table($table)
-                ->where('id', $row->id)
-                ->update([
-                    'embedding' => DB::raw("'[" . implode(',', $embedding) . "]'")
-                ]);
-
-            $this->info("Updated {$table} ID {$row->id}");
+            if (!empty($embedding)) {
+                DB::table($table)
+                    ->where('id', $row->id)
+                    ->update([
+                        'embedding' => DB::raw("'[" . implode(',', $embedding) . "]'")
+                    ]);
+                $this->info("Updated {$table} ID {$row->id}");
+            } else {
+                $this->warn("Skipped {$table} ID {$row->id} due to empty embedding.");
+            }
         }
     }
 
     private function getEmbedding($text)
     {
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . config('services.gemini.key'),
-            'Content-Type' => 'application/json',
-        ])->post(
-            'https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent',
-            [
-                'model' => 'models/embedding-001',
-                'content' => [
-                    'parts' => [
-                        ['text' => $text]
-                    ]
+        // Pass the key in the URL query string
+        $apiKey = config('services.gemini.key');
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key={$apiKey}";
+
+        $response = Http::post($url, [
+            'model' => 'models/text-embedding-004', // Upgraded model
+            'content' => [
+                'parts' => [
+                    ['text' => $text]
                 ]
             ]
-        );
+        ]);
+
+        // Add some basic logging to catch errors in your console
+        if ($response->failed()) {
+            $this->error("API Error: " . $response->body());
+            return [];
+        }
 
         return $response->json()['embedding']['values'] ?? [];
     }

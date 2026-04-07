@@ -3,27 +3,16 @@ import { Head, useForm } from '@inertiajs/vue3';
 import { Sparkles, Loader2, AlertCircle, Bot, Database } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-
-interface ContextItem {
-    id: number;
-    name?: string;
-    title?: string;
-    notes?: string;
-    description?: string;
-}
 
 const props = defineProps<{
     insight?: string;
-    context_used?: ContextItem[];
+    steps_taken?: any[]; // This contains the conversation and tool calls
     query?: string;
-    type?: string;
 }>();
 
 const form = useForm({
-    query: props.query ?? '',
-    type: props.type ?? 'tenants'
+    query: props.query ?? ''
 });
 
 const runInsight = () => {
@@ -76,31 +65,11 @@ const runInsight = () => {
                     class="w-full mb-4 bg-background/50 border-white/10" rows="4" />
 
                 <!-- Controls -->
-                <div class="flex flex-wrap gap-3 items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <Select v-model="form.type">
-                            <SelectTrigger id="type" class="w-[180px]">
-                                <SelectValue placeholder="Select Data Source" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="tenants">Tenants</SelectItem>
-                                <SelectItem value="expenses">Expenses</SelectItem>
-                                <SelectItem value="properties">Properties</SelectItem>
-                                <SelectItem value="rules">Rules</SelectItem>
-                            </SelectContent>
-                        </Select>
-
-                        <span class="text-xs text-muted-foreground flex items-center gap-1">
-                            <Database class="h-3 w-3" /> Analyzing {{ form.type }} data
-                        </span>
-                    </div>
-
-                    <Button @click="runInsight" :disabled="form.processing" class="min-w-[150px]">
-                        <Loader2 v-if="form.processing" class="w-4 h-4 mr-2 animate-spin" />
-                        <Sparkles v-else class="w-4 h-4 mr-2" />
-                        {{ form.processing ? 'Analyzing...' : 'Generate Insight' }}
-                    </Button>
-                </div>
+                <Button @click="runInsight" :disabled="form.processing" class="min-w-[150px]">
+                    <Loader2 v-if="form.processing" class="w-4 h-4 mr-2 animate-spin" />
+                    <Sparkles v-else class="w-4 h-4 mr-2" />
+                    {{ form.processing ? 'Analyzing...' : 'Generate Insight' }}
+                </Button>
             </CardContent>
         </Card>
 
@@ -140,49 +109,32 @@ const runInsight = () => {
                     <Bot class="h-5 w-5" /> AI Insight
                 </CardTitle>
             </CardHeader>
+
             <CardContent class="pt-6">
-                <p class="whitespace-pre-line text-sm leading-relaxed">{{ insight }}</p>
-                <p
-                    class="text-xs text-muted-foreground mt-4 pt-4 border-t border-white/5 flex items-center justify-end gap-1">
-                    <Sparkles class="h-3 w-3" /> Generated using semantic search + AI reasoning
+                <div v-if="steps_taken && steps_taken.length > 1" class="mb-6 space-y-3">
+                    <h3 class="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70 flex items-center gap-2">
+                        <Database class="h-3 w-3" /> Agent Execution Path
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                        <template v-for="(step, index) in steps_taken" :key="index">
+                            <div v-if="step.parts && step.parts[0]?.functionCall" 
+                                class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/20 text-[11px] font-medium text-primary shadow-sm">
+                                <div class="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                                Sub-Agent: {{ step.parts[0].functionCall.name.replace('search_', '').toUpperCase() }}
+                            </div>
+                        </template>
+                    </div>
+                    <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-4" />
+                </div>
+
+                <p class="whitespace-pre-line text-sm leading-relaxed text-foreground/90 font-medium">
+                    {{ insight }}
+                </p>
+
+                <p class="text-xs text-muted-foreground mt-4 pt-4 border-t border-white/5 flex items-center justify-end gap-1 italic">
+                    <Sparkles class="h-3 w-3 text-primary" /> Orchestrated by Gemini Multi-Agent System
                 </p>
             </CardContent>
         </Card>
-
-        <!-- Context -->
-        <Card v-if="context_used && context_used.length" class="bg-muted/10 border-white/5">
-            <CardHeader class="pb-3 border-b border-white/5 bg-muted/20">
-                <CardTitle class="text-sm">Supporting Data</CardTitle>
-                <CardDescription>Records used to generate this insight</CardDescription>
-            </CardHeader>
-            <CardContent class="pt-0 px-0">
-
-                <div class="divide-y divide-white/5">
-                    <div v-for="item in context_used" :key="item.id" class="p-4 text-sm hover:bg-muted/10 transition-colors">
-                        <div v-if="form.type === 'tenants'">
-                            <strong class="text-foreground">{{ item.name }}</strong>
-                            <p class="text-muted-foreground mt-1">{{ item.notes }}</p>
-                        </div>
-
-                        <div v-else-if="form.type === 'expenses'">
-                            <strong class="text-foreground">{{ item.title }}</strong>
-                            <p class="text-muted-foreground mt-1">{{ item.notes }}</p>
-                        </div>
-
-                        <div v-else-if="form.type === 'properties'">
-                            <strong class="text-foreground">{{ item.name }}</strong>
-                            <p class="text-muted-foreground mt-1">{{ item.notes }}</p>
-                        </div>
-
-                        <div v-else-if="form.type === 'rules'">
-                            <strong class="text-foreground">{{ item.title }}</strong>
-                            <p class="text-muted-foreground mt-1">{{ item.description }}</p>
-                        </div>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-
-
     </div>
 </template>
