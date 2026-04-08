@@ -35,6 +35,11 @@ return [
         ],
     ],
 
+    'google' => [
+        'project_id' => env('GOOGLE_PROJECT_ID'),
+        'location' => env('GOOGLE_LOCATION')
+    ],
+
     'gemini' => [
         'key' => env('GEMINI_API_KEY'),
     ],

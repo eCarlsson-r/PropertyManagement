@@ -52,9 +52,12 @@
 - **Expense Tracking** — Categorized expenses (marketing, grocery, electricity, water, salary, fixing, supplies, others)
 - **Multi-Currency** — Currency support per property and tenant
 
-### 🤖 AI & Intelligence
-- **Semantic Search** — Natural language search across property data using vector embeddings
-- **AI Insights** — Generate intelligent analysis and recommendations for property optimization
+### 🤖 AI & Multi-Agent Intelligence
+- **Primary Agent Orchestrator** — Powered by **Gemini 1.5 Flash**, managing complex reasoning loops.
+- **Specialized Sub-Agents** — Independent agents for `Tenants`, `Expenses`, and `Properties` that the Orchestrator calls via **Function Calling**.
+- **RAG Pipeline (Retrieval Augmented Generation)** — Uses **Vertex AI `text-embedding-004`** to perform semantic vector searches across unstructured tenant notes and financial records.
+- **Autonomous Reasoning** — The system can correlate data across domains (e.g., identifying if a late-paying tenant is located in a high-maintenance property).
+- **Parallel Execution** — Supports parallel function calling to reduce latency when fetching data from multiple sub-agents.
 
 ### 🔐 Authentication & Security
 - **Laravel Fortify** — Full authentication suite (login, register, password reset, email verification)
@@ -76,7 +79,12 @@
 | **Build** | Vite 8 | Lightning-fast HMR and production bundling |
 | **Charts** | Chart.js | Financial and occupancy data visualization |
 | **Database** | SQLite (dev) / PostgreSQL (prod) | AlloyDB-ready for Google Cloud deployment |
+| **AI Model** | Gemini 2.5 Flash | Primary Reasoning & Orchestration |
+| **Embeddings** | Text-Embedding-004 | Vector representation of property data |
+| **Orchestration** | Vertex AI SDK | Tool-use and Function Calling |
+| **Vector DB** | pgvector (AlloyDB) | High-performance semantic search |
 | **Testing** | PHPUnit 11 | 93 tests, 494 assertions |
+| **Deployment** | Google Cloud Run | Serverless container orchestration |
 
 ---
 
@@ -139,15 +147,7 @@ The application will be available at **http://localhost:8000** (or your configur
 
 ### Demo Data
 
-The seeder provisions **3 fully-furnished properties** with realistic data:
-
-| Property | Type | Rooms | Units |
-|----------|------|-------|-------|
-| Kos Harmoni Jakarta | Boarding House | 2 room types | 30 units |
-| The Sudirman Executive | Apartment | 5 room types | 22 units |
-| Urus Villa Bali Eco | Premium Villa | 1 room type | 6 units |
-
-Each property includes tenants, receipts, categorized expenses, and property rules.
+The seeder provisions **2 fully-furnished properties**. Each property includes tenants, receipts, categorized expenses, and property rules.
 
 ---
 

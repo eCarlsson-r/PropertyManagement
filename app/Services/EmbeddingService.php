@@ -3,26 +3,22 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Google\Auth\Credentials\ServiceAccountCredentials;
+use App\Concerns\InteractWithVertexAI;
 
 class EmbeddingService
 {
+    use InteractWithVertexAI; // Import the same trait
+
     public function generate($text)
     {
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . config('services.gemini.key'),
-            'Content-Type' => 'application/json',
-        ])->post(
-                'https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent',
-                [
-                    'model' => 'models/text-embedding-004',
-                    'content' => [
-                        'parts' => [
-                            ['text' => $text]
-                        ]
-                    ]
-                ]
-            );
+        $response = $this->postToVertex('text-embedding-004:predict', [
+            'instances' => [[
+                'task_type' => 'RETRIEVAL_DOCUMENT',
+                'content' => $text
+            ]]
+        ]);
 
-        return $response->json()['embedding']['values'] ?? null;
+        return $response->json()['predictions'][0]['embeddings']['values'] ?? [];
     }
 }

@@ -17,49 +17,61 @@ class AIInsightController extends Controller
     {
         $messages = [['role' => 'user', 'parts' => [['text' => "Analyze: " . $request->input('query')]]]];
 
-        for ($i = 0; $i < 3; $i++) {
-            // Step 1: Call Gemini with Tool definitions
-            $response = $agent->callGemini($messages);
-            if (isset($response['candidates'])) {
-                $candidate = $response['candidates'][0]['content']['parts'][0];
+        for ($i = 0; $i < 5; $i++) { // Increased to 5 to allow more complex multi-step reasoning
+            $response = $agent->callVertexAI($messages);
 
-                // Check if Gemini wants to call a Sub-Agent (Function Call)
-                if (isset($candidate['functionCall'])) {
-                    $call = $candidate['functionCall'];
-                    $functionName = $call['name'];
-                    $args = $call['args'];
+            // Check if the API returned a valid candidate
+            if (isset($response['candidates'][0]['content']['parts'])) {
+                $parts = $response['candidates'][0]['content']['parts'];
+                
+                // Look for a function call in any part of the response
+                // Check if the AI wants to call one or more Sub-Agents
+                $functionCalls = collect($parts)->where('functionCall')->all();
 
-                    // Step 2: Execute the "Sub-Agent" (Your vector search logic)
-                    // We determine the table based on the function name Gemini chose
-                    $data = $agent->executeSubAgent($functionName, $args, $embeddingService);
+                if (!empty($functionCalls)) {
+                    $feedbackParts = [];
 
-                    // Step 3: Feedback the data to the Primary Agent
-                    $messages[] = $response['candidates'][0]['content']; // AI's request
-                    $messages[] = [
-                        'role' => 'tool',
-                        'parts' => [
-                            [
-                                'toolResponse' => [
-                                    'name' => $functionName,
-                                    'response' => ['content' => $data]
-                                ]
+                    foreach ($functionCalls as $part) {
+                        $call = $part['functionCall'];
+                        $functionName = $call['name'];
+                        $args = $call['args'];
+
+                        // Execute the Sub-Agent
+                        $data = $agent->executeSubAgent($functionName, $args, $embeddingService);
+
+                        // Build the corresponding response part
+                        $feedbackParts[] = [
+                            'functionResponse' => [
+                                'name' => $functionName,
+                                'response' => ['name' => $functionName, 'content' => $data]
                             ]
-                        ]
+                        ];
+                    }
+
+                    // Step 3: Feedback BOTH the original AI request and your responses
+                    $messages[] = $response['candidates'][0]['content']; 
+                    $messages[] = [
+                        'role' => 'function',
+                        'parts' => $feedbackParts // This now contains 1-to-1 responses for every call
                     ];
-                    continue; // Go back to top to let Gemini analyze the new data
+                    
+                    continue; 
                 }
 
-                // Final Result: If no function call, Gemini has finished the task
+                // If we are here, there's no function call. Look for the text part.
+                $textPart = collect($parts)->firstWhere('text');
+                
                 return inertia('AI/Insights', [
-                    'insight' => $candidate['text'] ?? 'Done',
-                    'steps_taken' => $messages // This MUST match your Vue prop name
+                    'insight' => $textPart['text'] ?? 'Analysis complete with no summary text.',
+                    'steps_taken' => $messages 
                 ]);
-            } else {
-                return inertia('AI/Insights', [
-                    'insight' => $response['error']['message'],
-                    'steps_taken' => $messages // This MUST match your Vue prop name
-                ]);
-            }
+            } 
+
+            // Fallback for errors
+            return inertia('AI/Insights', [
+                'insight' => 'Error: ' . json_encode($response),
+                'steps_taken' => $messages 
+            ]);
         }
     }
 }

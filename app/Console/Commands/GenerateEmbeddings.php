@@ -6,9 +6,12 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Config;
+use App\Concerns\InteractWithVertexAI;
 
 class GenerateEmbeddings extends Command
 {
+    use InteractWithVertexAI; // Import the same trait
+    
     protected $signature = 'embeddings:generate';
     protected $description = 'Generate embeddings for tenants, expenses, properties, and rules';
 
@@ -53,30 +56,44 @@ class GenerateEmbeddings extends Command
             } else {
                 $this->warn("Skipped {$table} ID {$row->id} due to empty embedding.");
             }
+
+            sleep(1);
         }
     }
-
+    
     private function getEmbedding($text)
     {
-        // Pass the key in the URL query string
-        $apiKey = config('services.gemini.key');
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key={$apiKey}";
+        if (empty($text)) return [];
 
-        $response = Http::post($url, [
-            'model' => 'models/text-embedding-004', // Upgraded model
-            'content' => [
-                'parts' => [
-                    ['text' => $text]
-                ]
-            ]
-        ]);
+        $success = false;
+        $attempts = 0;
 
-        // Add some basic logging to catch errors in your console
-        if ($response->failed()) {
-            $this->error("API Error: " . $response->body());
-            return [];
+        while (!$success && $attempts < 10) {
+            $response = $this->postToVertex('text-embedding-004:predict', [
+                'instances' => [[
+                    'task_type' => 'RETRIEVAL_DOCUMENT',
+                    'content' => $text
+                ]]
+            ]);
+
+            if ($response->successful()) {
+                return $response->json()['predictions'][0]['embeddings']['values'] ?? [];
+            }
+
+            if ($response->status() === 429) {
+                $attempts++;
+                // Exponentially increase wait time: 2s, 4s, 8s...
+                $waitTime = pow(2, $attempts); 
+                dump("Rate limited on record. Retrying in {$waitTime}s...");
+                sleep($waitTime);
+                continue;
+            }
+
+            // If it's a 400 or 500 error, log it and stop to prevent infinite loops
+            dump("Vertex AI Permanent Error: " . $response->status());
+            break;
         }
 
-        return $response->json()['embedding']['values'] ?? [];
+        return [];
     }
 }

@@ -2,7 +2,7 @@
 import { Head, useForm } from '@inertiajs/vue3';
 import { Sparkles, Loader2, AlertCircle, Bot, Database } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 
 const props = defineProps<{

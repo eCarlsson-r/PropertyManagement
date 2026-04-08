@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Fixed Admin User
+        // 1. Admin User
         User::factory()->create([
             'username' => 'admin',
             'name' => 'Administrator',
@@ -31,154 +31,117 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('5050'),
         ]);
 
-        // 2. Define Properties with diverse profiles
+        // 2. Define Properties
         $properties = [
             [
-                "name" => "Urus Residence Gg. D",
-                "address" => "Jl. K. H. Syekh Abdul Wahab Rokan Gg. D No. 1B",
-                "city" => "Medan",
-                "type" => "Kos",
-                "occupancy_rate" => 7, // 70%
-                "rooms" => [
-                    ["name" => "Kamar AC Emerald", "price" => 1800000, "count" => 12, "area" => 24],
-                    ["name" => "Kamar Non AC Sapphire", "price" => 950000, "count" => 18, "area" => 18]
-                ],
-                "expense_cats" => ['electricity', 'water', 'others']
-            ],
-            [
                 "name" => "The Sudirman Executive",
-                "address" => "SCBD Lot 11, Jl. Jend. Sudirman",
+                "owner_name" => "Budi Santoso",
+                "address" => "SCBD Lot 11, Jakarta",
                 "city" => "Jakarta",
                 "type" => "Apartment",
-                "occupancy_rate" => 9, // 90%
-                "rooms" => [
-                    ["name" => "Elite Studio", "price" => 6500000, "count" => 10, "area" => 42],
-                    ["name" => "Royal Two Bedroom", "price" => 12000000, "count" => 5, "area" => 85],
-                    ["name" => "Presidential Suite", "price" => 25000000, "count" => 2, "area" => 150]
-                ],
-                "expense_cats" => ['fixing', 'electricity', 'supplies', 'others']
+                "occupancy_rate" => 9,
+                "account_bank" => "BCA",
+                "account_number" => "1234567890",
+                "rooms" => [["name" => "Elite Studio", "daily_price" => 0, "weekly_price" => 0, "monthly_price" => 1800000, "annual_price" => 0, "count" => 5, "area" => 42]],
+                "expense_cats" => ['fixing', 'electricity', 'water']
             ],
             [
-                "name" => "Urus Villa Bali Eco",
-                "address" => "Jl. Raya Sanggingan No. 88X",
-                "city" => "Gianyar",
-                "type" => "Villa",
-                "occupancy_rate" => 10, // 100% (High Season)
-                "rooms" => [
-                    ["name" => "Infinity Pool Villa", "price" => 3500000, "count" => 6, "area" => 220, "is_daily" => true]
-                ],
-                "expense_cats" => ['water', 'electricity', 'salary', 'supplies']
+                "name" => "Urus Residence Gg. D",
+                "owner_name" => "Siti Aminah",
+                "address" => "Jl. K. H. Syekh Abdul Wahab, Medan",
+                "city" => "Medan",
+                "type" => "Kos",
+                "occupancy_rate" => 7,
+                "account_bank" => "BNI",
+                "account_number" => "1234567890",
+                "rooms" => [["name" => "Kamar AC", "daily_price" => 0, "weekly_price" => 0, "monthly_price" => 2500000, "annual_price" => 0, "count" => 5, "area" => 24]],
+                "expense_cats" => ['electricity', 'water']
             ]
         ];
 
         foreach ($properties as $propData) {
             $property = Property::create([
                 "name" => $propData["name"],
-                "owner_name" => fake()->name(),
-                "owner_country_code" => "62",
-                "owner_mobile" => "812" . rand(10000000, 99999999),
+                "owner_name" => $propData["owner_name"],
+                "currency" => "IDR",
+                "owner_country_code" => "+62",
+                "owner_mobile" => fake()->phoneNumber(),
                 "manager_name" => fake()->name(),
-                "manager_country_code" => "62",
-                "manager_mobile" => "812" . rand(10000000, 99999999),
-                "account_owner" => "PT Urus Properti Indonesia",
-                "account_bank" => "BCA / Mandiri",
-                "account_number" => rand(100000000, 999999999),
-                "currency" => "IDR"
+                "manager_country_code" => "+62",
+                "manager_mobile" => fake()->phoneNumber(),
+                "account_owner" => $propData["owner_name"],
+                "account_bank" => $propData["account_bank"],
+                "account_number" => $propData["account_number"]
             ]);
 
-            Location::create([
+            $location = Location::create([
                 "property_id" => $property->id,
                 "address" => $propData["address"],
-                "country" => "Indonesia",
-                "province" => $propData["city"] == "Bali" ? "Bali" : "Daerah Khusus",
                 "city" => $propData["city"],
-                "district" => "Central Hub",
-                "subdistrict" => "Premium Area",
-                "postal" => rand(10000, 99999)
+                "country" => "Indonesia"
             ]);
 
-            Rule::create(["property_id" => $property->id, "title" => "Strictly No Smoking", "description" => "A Rp 2.000.000 fine applies for violations."]);
-            Rule::create(["property_id" => $property->id, "title" => "No Pets", "description" => "Pets are not allowed in the premises."]);
-
+            // --- SEEDING TENANTS WITH "INSIGHT TRIGGERS" ---
             foreach ($propData["rooms"] as $roomData) {
-                $isDaily = $roomData["is_daily"] ?? false;
                 $room = Room::create([
-                    "name" => $roomData["name"],
-                    "area" => $roomData["area"],
-                    "daily_price" => $isDaily ? $roomData["price"] : 0,
-                    "weekly_price" => $isDaily ? $roomData["price"] * 6 : 0,
-                    "monthly_price" => $isDaily ? $roomData["price"] * 25 : $roomData["price"],
-                    "annual_price" => $isDaily ? $roomData["price"] * 300 : $roomData["price"] * 11
+                    "name" => $roomData["name"], 
+                    "area" => $roomData["area"], 
+                    "daily_price" => $roomData["daily_price"], 
+                    "weekly_price" => $roomData["weekly_price"], 
+                    "monthly_price" => $roomData["monthly_price"], 
+                    "annual_price" => $roomData["annual_price"]
                 ]);
 
                 for ($i = 1; $i <= $roomData["count"]; $i++) {
-                    $unit = Unit::create([
-                        "property_id" => $property->id,
-                        "room_id" => $room->id,
-                        "name" => ($i < 10 ? '0' : '') . $i . (chr(64 + rand(1, 4))),
-                        "floor" => rand(1, 10)
+                    $unit = Unit::create(["property_id" => $property->id, "room_id" => $room->id, "name" => "Unit " . $i, "floor" => 1]);
+
+                    // Create one "Risky Tenant" in Jakarta
+                    $isRisky = ($i === 1 && $propData['name'] === "The Sudirman Executive");
+                    
+                    Tenant::create([
+                        "name" => $isRisky ? "Marcus Aurelius" : fake()->name(),
+                        "country_code" => "+62",
+                        "mobile" => fake()->phoneNumber(),
+                        "email" => fake()->email(),
+                        "unit_id" => $unit->id,
+                        "cycle" => 'monthly',
+                        "birth_date" => fake()->date(),
+                        "gender" => "male",
+                        "marital_status" => "single",
+                        "address" => fake()->address(),
+                        "account_bank" => "BCA",
+                        "account_number" => "1234567890",
+                        "account_owner" => $isRisky ? "Marcus Aurelius" : fake()->name(),
+                        "currency" => "IDR",
+                        "notes" => $isRisky 
+                            ? "CRITICAL: This tenant has requested 3 rent extensions this quarter. Payment history shows consistent 10-day delays. Neighbors have complained about late-night noise." 
+                            : "Standard tenant with no history of complaints or late payments.",
+                        "emergency_contact_name" => fake()->name(),
+                        "emergency_contact_relationship" => "Family",
+                        "emergency_contact_country_code" => "+62",
+                        "emergency_contact_mobile" => fake()->phoneNumber(),
+                        "deposit" => $roomData["monthly_price"]
                     ]);
-
-                    if (rand(1, 10) <= $propData["occupancy_rate"]) {
-                        $tenant = Tenant::create([
-                            "name" => fake()->name(),
-                            "country_code" => "62",
-                            "mobile" => "8" . rand(100000000, 999999999),
-                            "unit_id" => $unit->id,
-                            "cycle" => $isDaily ? "daily" : "monthly",
-                            "notes" => fake()->sentence(),
-                            "emergency_contact_name" => fake()->name(),
-                            "emergency_contact_relationship" => "Family",
-                            "emergency_contact_country_code" => "62",
-                            "emergency_contact_mobile" => "8" . rand(100000000, 999999999),
-                            "deposit" => $isDaily ? $roomData["price"] * 2 : $roomData["price"]
-                        ]);
-
-                        // Seed financial history for last 12 months for better charts
-                        for ($m = 0; $m < 12; $m++) {
-                            $date = now()->subMonths($m);
-                            $price = $isDaily ? $roomData["price"] * rand(3, 7) : $roomData["price"];
-                            $tax = $price * 0.1; // 10% tax
-                            $total = $price + $tax;
-                            $paid = (rand(0, 10) > 2) ? $total : ($total * 0.5); // 20% chance of partial payment
-                            
-                            Receipt::create([
-                                "tenant_id" => $tenant->id,
-                                "unit_id" => $unit->id,
-                                "receipt_cycle" => $isDaily ? "daily" : "monthly",
-                                "start_date" => $date->startOfMonth()->toDateString(),
-                                "end_date" => $date->endOfMonth()->toDateString(),
-                                "discount_type" => rand(1, 10) > 8 ? "nominal" : "none",
-                                "discount_percent" => 0,
-                                "discount_amount" => rand(1, 10) > 8 ? 50000 : 0,
-                                "tax" => $tax,
-                                "down_payment" => 0,
-                                "remaining" => $total - $paid,
-                                "total" => $total,
-                                "fully_paid" => $paid >= $total,
-                                "reminder" => "3-days-advance",
-                                "adults" => rand(1, 2),
-                                "children" => rand(0, 1),
-                                "babies" => 0,
-                                "pets" => 0,
-                                "created_at" => $date->toDateString()
-                            ]);
-                        }
-                    }
                 }
             }
 
-            // Seed seasonal Expenses for last 12 months
+            // --- SEEDING EXPENSES WITH "OUTLIER TRIGGERS" ---
             foreach ($propData["expense_cats"] as $cat) {
-                for ($m = 0; $m < 12; $m++) {
+                for ($m = 0; $m < 3; $m++) {
                     $date = now()->subMonths($m);
+                    
+                    // Create one "Unusual Expense" in the current month for Jakarta
+                    $isSpike = ($m === 0 && $cat === 'fixing' && $propData['name'] === "The Sudirman Executive");
+
                     Expense::create([
                         "date" => $date->toDateString(),
-                        "title" => "Monthly " . str_replace('_', ' ', ucfirst($cat)),
+                        "title" => $isSpike ? "Emergency Elevator Shaft Overhaul" : "Regular " . ucfirst($cat),
                         "property_id" => $property->id,
-                        "amount" => rand(1000000, 12000000) * (1 + (rand(-20, 20) / 100)), // Varied amounts
+                        "amount" => $isSpike ? 45000000 : rand(500000, 1500000), 
                         "category" => $cat,
-                        "notes" => "Standard operational overhead."
+                        "notes" => $isSpike 
+                            ? "Major mechanical failure. Emergency parts sourced from Singapore. Cost is 15x higher than monthly budget for maintenance." 
+                            : "Routine operational utility bill."
                     ]);
                 }
             }

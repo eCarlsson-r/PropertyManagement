@@ -2,11 +2,17 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
-use App\Services\EmbeddingService;
 use Illuminate\Support\Facades\Http;
+use App\Services\EmbeddingService;
+use App\Concerns\InteractWithVertexAI;
+use Google\Protobuf\Value;
+use Google\Cloud\AIPlatform\V1\PredictionServiceClient;
+use Google\Auth\Credentials\ServiceAccountCredentials;
 
 class PropertyAgentService
 {
+    use InteractWithVertexAI; // Import the trait
+
     public function getToolsDefinitions(): array
     {
         return [
@@ -49,13 +55,17 @@ class PropertyAgentService
         ];
     }
 
-    public function callGemini($messages)
+    public function callVertexAI($messages)
     {
-        return Http::post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . config('services.gemini.key'), [
+        $response = $this->postToVertex('gemini-2.5-flash:generateContent', [
             'contents' => $messages,
             'tools' => $this->getToolsDefinitions(),
-            'generationConfig' => ['temperature' => 0.1]
-        ])->json();
+            'generationConfig' => [
+                'temperature' => 0.1
+            ]
+        ]);
+        
+        return $response->json();
     }
 
     private function buildContext($records, $table)
@@ -92,7 +102,6 @@ class PropertyAgentService
             ->select('*', DB::raw("embedding <-> '{$vector}' as distance"))
             ->whereNotNull('embedding')
             ->orderBy('distance')
-            ->limit(3)
             ->get();
 
         if ($records->isEmpty()) {
