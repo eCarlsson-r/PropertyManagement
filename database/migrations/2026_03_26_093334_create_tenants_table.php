@@ -35,6 +35,7 @@ return new class extends Migration
             $table->integer("deposit");
             $table->string("deposit_bank")->nullable();
             $table->string("deposit_number")->nullable();
+            if (DB::getDriverName() === 'pgsql') $table->vector('embedding', 768)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -31,8 +31,11 @@ return new class extends Migration
             $table->integer("children")->default(0);
             $table->integer("babies")->default(0);
             $table->integer("pets")->default(0);
-            $table->string("reminder");
+            $table->string("reminder")->nullable();
+            if (DB::getDriverName() === 'pgsql') $table->vector('embedding', 768)->nullable();
             $table->timestamps();
+            $table->index('fully_paid');
+            $table->index('remaining');
         });
     }
 

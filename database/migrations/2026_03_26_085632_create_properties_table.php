@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string("account_bank");
             $table->string("account_number");
             $table->text("notes")->nullable();
+            if (DB::getDriverName() === 'pgsql') $table->vector('embedding', 768)->nullable();
             $table->timestamps();
         });
     }

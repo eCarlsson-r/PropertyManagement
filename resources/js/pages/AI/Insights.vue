@@ -10,6 +10,7 @@ const props = defineProps<{
     steps_taken?: any[]; // This contains the conversation and tool calls
     query?: string;
 }>();
+console.info(props);
 
 const form = useForm({
     query: props.query ?? ''
@@ -124,7 +125,7 @@ const runInsight = () => {
                             </div>
                         </template>
                     </div>
-                    <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-4" />
+                    <div class="h-px w-full bg-linear-to-r from-transparent via-white/10 to-transparent my-4" />
                 </div>
 
                 <p class="whitespace-pre-line text-sm leading-relaxed text-foreground/90 font-medium">

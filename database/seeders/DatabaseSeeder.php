@@ -59,6 +59,16 @@ class DatabaseSeeder extends Seeder
             ]
         ];
 
+        Rule::create([
+            'title' => 'Late Payment Policy',
+            'description' => 'Tenants with outstanding balances exceeding 7 days are subject to a 5% late fee penalty. If debt exceeds 14 days, a formal eviction warning must be drafted.'
+        ]);
+
+        Rule::create([
+            'title' => 'Emergency Maintenance Fund',
+            'description' => 'Any single repair expense exceeding 10,000,000 IDR is classified as a Critical Financial Event and requires immediate cash-flow optimization from outstanding receivables.',
+        ]);
+
         foreach ($properties as $propData) {
             $property = Property::create([
                 "name" => $propData["name"],
@@ -98,7 +108,7 @@ class DatabaseSeeder extends Seeder
                     // Create one "Risky Tenant" in Jakarta
                     $isRisky = ($i === 1 && $propData['name'] === "The Sudirman Executive");
                     
-                    Tenant::create([
+                    $tenant = Tenant::create([
                         "name" => $isRisky ? "Marcus Aurelius" : fake()->name(),
                         "country_code" => "+62",
                         "mobile" => fake()->phoneNumber(),
@@ -122,6 +132,38 @@ class DatabaseSeeder extends Seeder
                         "emergency_contact_mobile" => fake()->phoneNumber(),
                         "deposit" => $roomData["monthly_price"]
                     ]);
+
+                    if ($isRisky) {
+                        // Create an OUTSTANDING receipt for Marcus
+                        Receipt::create([
+                            "tenant_id" => $tenant->id,
+                            "unit_id" => $unit->id,
+                            "receipt_cycle" => "February 2026",
+                            "start_date" => "2026-02-01",
+                            "end_date" => "2026-02-28",
+                            "discount_type" => "none",
+                            "total" => 1800000,
+                            "remaining" => 1800000, // Full amount unpaid
+                            "fully_paid" => false,
+                            "reminder" => "Sent",
+                            "notes" => "Automatic late fee pending. Tenant requested extension via WhatsApp."
+                        ]);
+                    } else {
+                        // Create a PAID receipt for everyone else
+                        Receipt::create([
+                            "tenant_id" => $tenant->id,
+                            "unit_id" => $unit->id,
+                            "receipt_cycle" => "February 2026",
+                            "start_date" => "2026-02-01",
+                            "end_date" => "2026-02-28",
+                            "discount_type" => "none",
+                            "total" => $roomData["monthly_price"],
+                            "remaining" => 0,
+                            "fully_paid" => true,
+                            "reminder" => "None",
+                            "notes" => "Paid on time."
+                        ]);
+                    }
                 }
             }
 

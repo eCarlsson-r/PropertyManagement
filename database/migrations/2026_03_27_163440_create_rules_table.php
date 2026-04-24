@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('rules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('property_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->text('description');
+            if (DB::getDriverName() === 'pgsql') $table->vector('embedding', 768)->nullable();
             $table->timestamps();
         });
     }

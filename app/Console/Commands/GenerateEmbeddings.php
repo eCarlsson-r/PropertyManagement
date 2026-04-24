@@ -17,22 +17,34 @@ class GenerateEmbeddings extends Command
 
     public function handle()
     {
-        $this->info('Generating embeddings...');
+        $this->info('Generating embeddings with rich context...');
 
         $this->generateForTable('tenants', function ($row) {
-            return "{$row->name} tenant with phone {$row->mobile}";
+            // INCLUDE NOTES: This is where the "Risk" keywords live!
+            return "Tenant: {$row->name}. History and behavior: {$row->notes}";
         });
 
         $this->generateForTable('expenses', function ($row) {
-            return "{$row->title} expense of {$row->amount} for {$row->category}";
+            // INCLUDE NOTES: This is where "Emergency" and "Outlier" details live!
+            return "Expense: {$row->title} ({$row->category}) costing {$row->amount}. Details: {$row->notes}";
         });
 
         $this->generateForTable('properties', function ($row) {
-            return "{$row->name} owned by {$row->owner_name}";
+            // Manually fetch the location for this property
+            $location = DB::table('locations')->where('property_id', $row->id)->first();
+            
+            $address = $location ? $location->address : 'No address';
+            $city = $location ? $location->city : 'Unknown city';
+
+            return "Property: {$row->name}. " .
+                "Location: {$address}, {$city}. " .
+                "Owner: {$row->owner_name}. " .
+                "Manager: {$row->manager_name}. " .
+                "Details: {$row->notes}";
         });
 
         $this->generateForTable('rules', function ($row) {
-            return "{$row->title}: {$row->description}";
+            return "Business Rule - {$row->title}: {$row->description}";
         });
 
         $this->info('Done.');

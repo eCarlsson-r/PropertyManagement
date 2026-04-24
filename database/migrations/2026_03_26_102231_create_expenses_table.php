@@ -28,6 +28,7 @@ return new class extends Migration
                 'others'
             ]);
             $table->text("notes")->nullable();
+            if (DB::getDriverName() === 'pgsql') $table->vector('embedding', 768)->nullable();
             $table->timestamps();
         });
     }

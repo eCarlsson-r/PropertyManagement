@@ -37,18 +37,18 @@ class Receipt extends Model
         return $this->belongsTo(Tenant::class);
     }
 
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
     public function property()
     {
-        return $this->belongsTo(Property::class);
+        return $this->unit->property();
     }
 
     public function room()
     {
-        return $this->belongsTo(Room::class);
-    }
-
-    public function unit()
-    {
-        return $this->belongsTo(Unit::class);
+        return $this->unit->room();
     }
 }
