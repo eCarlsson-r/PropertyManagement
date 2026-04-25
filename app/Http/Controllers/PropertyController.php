@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Property;
 use App\Models\Location;
 use App\Models\Room;
+use App\Models\Unit;
 use Inertia\Inertia;
 
 class PropertyController extends Controller
@@ -94,6 +95,27 @@ class PropertyController extends Controller
             ["property_id" => $property->id],
             $request->location
         );
+
+        // Update Rules if provided
+        if (isset($request->rules)) {
+            $property->rules()->delete(); // Remove old rules
+            foreach ($request->rules as $rule) {
+                if (!empty($rule['title'])) {
+                    $property->rules()->create($rule);
+                }
+            }
+        }
+
+        if (isset($request->units)) {
+            foreach($request->units as $unit) {
+                if (!isset($unit['id'])) {
+                    Unit::create($unit + ['property_id' => $property->id]);
+                } else {
+                    unset($unit['room']);
+                    Unit::where('id', $unit['id'])->update($unit);
+                }
+            }
+        }
 
         return redirect()->route("properties.index");
     }

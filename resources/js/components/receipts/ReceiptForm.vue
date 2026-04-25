@@ -43,7 +43,7 @@ export interface ReceiptFormData {
 
 const form = defineModel<InertiaForm<ReceiptFormData>>('form', { required: true });
 
-defineProps<{
+const props = defineProps<{
     tenants: Tenant[];
     properties: Property[];
     units: Unit[];
@@ -80,6 +80,33 @@ const calculateEndDate = () => {
     form.value.end_date = date.toISOString().split('T')[0];
 };
 
+const calculateTotal = () => {
+    const unit = props.units.find((unit) => unit.id === form.value.unit_id);
+
+    if (unit && unit.room) {
+        let price = 0;
+
+        switch (form.value.receipt_cycle) {
+            case 'daily':
+                price = unit.room.daily_price || 0;
+                break;
+            case 'weekly':
+                price = unit.room.weekly_price || 0;
+                break;
+            case 'monthly':
+                price = unit.room.monthly_price || 0;
+                break;
+            case 'annual':
+                price = unit.room.annual_price || 0;
+                break;
+        }
+
+        form.value.total = (price ?? 0) * form.value.receipt_duration;
+    } else {
+        form.value.total = 0;
+    }
+};
+
 watch(
     [() => form.value.start_date, () => form.value.receipt_duration, () => form.value.receipt_cycle],
     () => {
@@ -97,6 +124,10 @@ watch(
 onMounted(() => {
     if (!form.value.end_date) {
         calculateEndDate();
+    }
+
+    if (!form.value.total) {
+        calculateTotal();
     }
 });
 

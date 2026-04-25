@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('receipts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("tenant_id")->constrained("tenants");
-            $table->foreignId("unit_id")->constrained("units");
+            $table->foreignId("tenant_id")->constrained("tenants")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId("unit_id")->constrained("units")->cascadeOnUpdate()->cascadeOnDelete();
             $table->string("receipt_cycle");
             $table->date("start_date");
             $table->date("end_date");
@@ -32,7 +32,6 @@ return new class extends Migration
             $table->integer("babies")->default(0);
             $table->integer("pets")->default(0);
             $table->string("reminder")->nullable();
-            if (DB::getDriverName() === 'pgsql') $table->vector('embedding', 768)->nullable();
             $table->timestamps();
             $table->index('fully_paid');
             $table->index('remaining');

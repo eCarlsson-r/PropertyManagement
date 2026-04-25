@@ -17,6 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import type { Room } from '@/pages/rooms/index.vue';
 
 export interface Unit {
@@ -103,6 +104,27 @@ const submit = () => {
                     <Label for="floor">Floor</Label>
                     <Input id="floor" v-model="form.floor" placeholder="Floor" required />
                     <InputError :message="form.errors.floor" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="rentable">Rentable</Label>
+                    <Switch id="rentable" v-model="form.rentable" required />
+                    <InputError :message="form.errors.rentable" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="condition">Condition</Label>
+                    <Select id="condition" v-model="form.condition" placeholder="Condition" class="w-full" required>
+                        <SelectTrigger class="w-full">
+                            <SelectValue placeholder="Condition" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="new">New</SelectItem>
+                            <SelectItem value="good">Good</SelectItem>
+                            <SelectItem value="poor">Poor</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="form.errors.condition" />
                 </div>
 
                 <DialogFooter>

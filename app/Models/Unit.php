@@ -11,7 +11,7 @@ class Unit extends Model
         "name",
         "floor",
         "room_id",
-        "available",
+        "rentable",
         "condition"
     ];
 

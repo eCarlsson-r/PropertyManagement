@@ -21,9 +21,6 @@ return new class extends Migration
             $table->string("manager_name");
             $table->string("manager_country_code");
             $table->string("manager_mobile");
-            $table->string("account_owner");
-            $table->string("account_bank");
-            $table->string("account_number");
             $table->text("notes")->nullable();
             if (DB::getDriverName() === 'pgsql') $table->vector('embedding', 768)->nullable();
             $table->timestamps();

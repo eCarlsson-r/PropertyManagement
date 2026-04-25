@@ -40,8 +40,6 @@ class DatabaseSeeder extends Seeder
                 "city" => "Jakarta",
                 "type" => "Apartment",
                 "occupancy_rate" => 9,
-                "account_bank" => "BCA",
-                "account_number" => "1234567890",
                 "rooms" => [["name" => "Elite Studio", "daily_price" => 0, "weekly_price" => 0, "monthly_price" => 1800000, "annual_price" => 0, "count" => 5, "area" => 42]],
                 "expense_cats" => ['fixing', 'electricity', 'water']
             ],
@@ -52,8 +50,6 @@ class DatabaseSeeder extends Seeder
                 "city" => "Medan",
                 "type" => "Kos",
                 "occupancy_rate" => 7,
-                "account_bank" => "BNI",
-                "account_number" => "1234567890",
                 "rooms" => [["name" => "Kamar AC", "daily_price" => 0, "weekly_price" => 0, "monthly_price" => 2500000, "annual_price" => 0, "count" => 5, "area" => 24]],
                 "expense_cats" => ['electricity', 'water']
             ]
@@ -78,10 +74,7 @@ class DatabaseSeeder extends Seeder
                 "owner_mobile" => fake()->phoneNumber(),
                 "manager_name" => fake()->name(),
                 "manager_country_code" => "+62",
-                "manager_mobile" => fake()->phoneNumber(),
-                "account_owner" => $propData["owner_name"],
-                "account_bank" => $propData["account_bank"],
-                "account_number" => $propData["account_number"]
+                "manager_mobile" => fake()->phoneNumber()
             ]);
 
             $location = Location::create([

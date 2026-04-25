@@ -32,9 +32,6 @@ class PropertyControllerTest extends TestCase
             'manager_name' => 'Jane Manager',
             'manager_country_code' => '+62',
             'manager_mobile' => '81234567891',
-            'account_owner' => 'John Owner',
-            'account_bank' => 'BCA',
-            'account_number' => '1234567890',
             'notes' => 'Test notes',
             'location' => [
                 'address' => '123 Main St',
@@ -58,10 +55,7 @@ class PropertyControllerTest extends TestCase
             'owner_mobile' => '81234567890',
             'manager_name' => 'Jane Manager',
             'manager_country_code' => '+62',
-            'manager_mobile' => '81234567891',
-            'account_owner' => 'John Owner',
-            'account_bank' => 'BCA',
-            'account_number' => '1234567890',
+            'manager_mobile' => '81234567891'
         ]);
 
         Location::create([

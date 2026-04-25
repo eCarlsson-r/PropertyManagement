@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\EmbeddingService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Tenant extends Model
 {
@@ -33,25 +35,27 @@ class Tenant extends Model
 
     protected $guarded = ["id"];
 
-    /*protected $model;
-    protected $text;
-
-    public function __construct($model, $text)
+    protected static function booted()
     {
-        $this->model = $model;
-        $this->text = $text;
-    }*/
+        static::saved(function ($tenant) {
+            // Check if name, notes, or address changed to avoid redundant API calls
+            if ($tenant->wasRecentlyCreated || $tenant->isDirty(['name', 'notes', 'address'])) {
+                
+                // Construct the rich text for the vector database
+                $text = "Tenant: {$tenant->name}. History and behavior: {$tenant->notes}. Address: {$tenant->address}";
+                
+                // Resolve the service and generate embedding
+                $service = app(EmbeddingService::class);
+                $embedding = $service->generate($text);
 
-    public function handle(EmbeddingService $service)
-    {
-        if ($tenant->isDirty(['notes', 'name', 'address'])) {
-            $embedding = $service->generate($this->text);
-
-            if ($embedding) {
-                $this->model->embedding = json_encode($embedding);
-                $this->model->save();
+                if ($embedding) {
+                    // Update the column directly in the DB to avoid re-triggering this 'saved' event
+                    DB::table('tenants')
+                        ->where('id', $tenant->id)
+                        ->update(['embedding' => DB::raw("'[" . implode(',', $embedding) . "]'")]);
+                }
             }
-        }
+        });
     }
 
     public function unit()
