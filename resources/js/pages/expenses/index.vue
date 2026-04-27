@@ -4,6 +4,7 @@ import { ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardAction, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { dashboard } from '@/routes';
 import { index as expensesIndex, create as expensesCreate, edit as expensesEdit, destroy as expensesDestroy } from '@/routes/expenses';
 import type { Property } from '../properties/index.vue';
@@ -101,50 +102,47 @@ function deleteExpense(expense: Expense) {
         </CardHeader>
         <CardContent>
             <div class="overflow-x-auto rounded-md">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-muted/10">
-                            <th class="px-4 py-3 text-left font-medium">Date</th>
-                            <th class="px-4 py-3 text-left font-medium">Property</th>
-                            <th class="px-4 py-3 text-left font-medium">Title</th>
-                            <th class="px-4 py-3 text-left font-medium">Category</th>
-                            <th class="px-4 py-3 text-right font-medium">Amount</th>
-                            <th class="px-4 py-3 text-right font-medium">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="expenses.data.length === 0">
-                            <td colspan="6" class="px-4 py-8 text-center text-muted-foreground">
+                <Table>
+                    <TableHeader>
+                        <TableRow class="bg-muted/10">
+                            <TableHead>Date</TableHead>
+                            <TableHead>Property</TableHead>
+                            <TableHead>Title</TableHead>
+                            <TableHead>Category</TableHead>
+                            <TableHead>Amount</TableHead>
+                            <TableHead>Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow v-if="expenses.data.length === 0">
+                            <TableCell colspan="6" class="px-4 py-8 text-center text-muted-foreground">
                                 No expenses found.
-                            </td>
-                        </tr>
-                        <tr v-for="expense in expenses.data" :key="expense.id" class="hover:bg-muted/10">
-                            <td class="px-4 py-3">{{ expense.date }}</td>
-                            <td class="px-4 py-3">{{ expense.property?.name }}</td>
-                            <td class="px-4 py-3 font-medium">{{ expense.title }}</td>
-                            <td class="px-4 py-3 capitalize">{{ expense.category }}</td>
-                            <td class="px-4 py-3 text-right">{{ Number(expense.amount).toLocaleString("id-ID", {
+                            </TableCell>
+                        </TableRow>
+                        <TableRow v-for="expense in expenses.data" :key="expense.id" class="hover:bg-muted/10">
+                            <TableCell>{{ expense.date }}</TableCell>
+                            <TableCell>{{ expense.property?.name }}</TableCell>
+                            <TableCell>{{ expense.title }}</TableCell>
+                            <TableCell>{{ expense.category }}</TableCell>
+                            <TableCell>{{ Number(expense.amount).toLocaleString("id-ID", {
                                 style: "currency",
                                 currency: "IDR",
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0
-                            }) }}</td>
-                            <td class="px-4 py-3 text-right">
-                                <div class="flex items-center justify-end gap-1">
-                                    <Button variant="ghost" size="sm" as-child>
-                                        <Link :href="expensesEdit.url(expense.id)">
-                                            Edit
-                                        </Link>
-                                    </Button>
-                                    <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive"
-                                        @click="deleteExpense(expense)">
-                                        Delete
-                                    </Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            }) }}</TableCell>
+                            <TableCell class="flex items-center justify-center gap-1">
+                                <Button variant="outline" size="sm" as-child>
+                                    <Link :href="expensesEdit.url(expense.id)">
+                                        Edit
+                                    </Link>
+                                </Button>
+                                <Button variant="destructive" size="sm" @click="deleteExpense(expense)">
+                                    Delete
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
 
             <!-- Pagination (same logic as receipts) -->

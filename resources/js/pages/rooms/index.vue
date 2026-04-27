@@ -4,6 +4,7 @@ import { ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardAction, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { dashboard } from '@/routes';
 import { index as roomsIndex, create as roomsCreate, edit as roomsEdit, destroy as roomsDestroy } from '@/routes/rooms';
 
@@ -93,68 +94,64 @@ function deleteRoom(room: Room) {
         </CardHeader>
         <CardContent>
             <div class="overflow-x-auto rounded-md">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-muted/10">
-                            <th class="px-4 py-3 text-left font-medium">Name</th>
-                            <th class="px-4 py-3 text-left font-medium">Area</th>
-                            <th class="px-4 py-3 text-left font-medium">Daily Price</th>
-                            <th class="px-4 py-3 text-left font-medium">Weekly Price</th>
-                            <th class="px-4 py-3 text-left font-medium">Monthly Price</th>
-                            <th class="px-4 py-3 text-left font-medium">Annual Price</th>
-                            <th class="px-4 py-3 text-right font-medium">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="rooms.data.length === 0">
-                            <td colspan="7" class="px-4 py-8 text-center text-muted-foreground">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Area</TableHead>
+                            <TableHead>Daily Price</TableHead>
+                            <TableHead>Weekly Price</TableHead>
+                            <TableHead>Monthly Price</TableHead>
+                            <TableHead>Annual Price</TableHead>
+                            <TableHead>Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow v-if="rooms.data.length === 0">
+                            <TableCell colspan="7" class="px-4 py-8 text-center text-muted-foreground">
                                 No rooms found.
-                            </td>
-                        </tr>
-                        <tr v-for="room in rooms.data" :key="room.id"
-                            class="hover:bg-muted/10">
-                            <td class="px-4 py-3">{{ room.name }}</td>
-                            <td class="px-4 py-3">{{ room.area }}</td>
-                            <td class="px-4 py-3">{{ room.daily_price.toLocaleString("id-ID", {
+                            </TableCell>
+                        </TableRow>
+                        <TableRow v-for="room in rooms.data" :key="room.id">
+                            <TableCell>{{ room.name }}</TableCell>
+                            <TableCell>{{ room.area }}</TableCell>
+                            <TableCell>{{ room.daily_price.toLocaleString("id-ID", {
                                 style: "currency",
                                 currency: "IDR",
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0
-                            }) }}</td>
-                            <td class="px-4 py-3">{{ room.weekly_price.toLocaleString("id-ID", {
+                            }) }}</TableCell>
+                            <TableCell>{{ room.weekly_price.toLocaleString("id-ID", {
                                 style: "currency",
                                 currency: "IDR",
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0
-                            }) }}</td>
-                            <td class="px-4 py-3">{{ room.monthly_price.toLocaleString("id-ID", {
+                            }) }}</TableCell>
+                            <TableCell>{{ room.monthly_price.toLocaleString("id-ID", {
                                 style: "currency",
                                 currency: "IDR",
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0
-                            }) }}</td>
-                            <td class="px-4 py-3">{{ room.annual_price.toLocaleString("id-ID", {
+                            }) }}</TableCell>
+                            <TableCell>{{ room.annual_price.toLocaleString("id-ID", {
                                 style: "currency",
                                 currency: "IDR",
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0
-                            }) }}</td>
-                            <td class="px-4 py-3 text-right">
-                                <div class="flex items-center justify-end gap-1">
-                                    <Button variant="ghost" size="sm" as-child>
-                                        <Link :href="roomsEdit.url(room.id)">
-                                            Edit
-                                        </Link>
-                                    </Button>
-                                    <Button variant="ghost" size="sm"
-                                        class="text-destructive hover:text-destructive" @click="deleteRoom(room)">
-                                        Delete
-                                    </Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            }) }}</TableCell>
+                            <TableCell class="flex items-center justify-center gap-1">
+                                <Button variant="outline" size="sm" as-child>
+                                    <Link :href="roomsEdit.url(room.id)">
+                                        Edit
+                                    </Link>
+                                </Button>
+                                <Button variant="destructive" size="sm" @click="deleteRoom(room)">
+                                    Delete
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
 
             <!-- Pagination -->

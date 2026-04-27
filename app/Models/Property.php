@@ -29,7 +29,7 @@ class Property extends Model
     protected static function booted()
     {
         static::saved(function ($property) {
-            if ($property->wasRecentlyCreated || $property->isDirty(['name', 'notes'])) {
+            if (DB::getDriverName() === 'pgsql' && ($property->wasRecentlyCreated || $property->isDirty(['name', 'notes']))) {
                 $location = $property->location; // Join location for rich context
                 $text = "Property: {$property->name}. Manager: {$property->manager_name}. Notes: {$property->notes}. City: " . ($location->city ?? 'Unknown');
                 

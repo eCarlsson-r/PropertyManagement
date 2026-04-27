@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardAction, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { dashboard } from '@/routes';
 import { index as receiptsIndex, create as receiptsCreate, edit as receiptsEdit, destroy as receiptsDestroy } from '@/routes/receipts';
 import type { Property } from '../properties/index.vue';
@@ -138,52 +139,49 @@ function deleteReceipt(receipt: Receipt) {
         </CardHeader>
         <CardContent>
             <div class="overflow-x-auto rounded-md">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-muted/10">
-                            <th class="px-4 py-3 text-left font-medium">Occupant</th>
-                            <th class="px-4 py-3 text-left font-medium">Property</th>
-                            <th class="px-4 py-3 text-left font-medium">Room</th>
-                            <th class="px-4 py-3 text-left font-medium">Total</th>
-                            <th class="px-4 py-3 text-left font-medium">Start Date</th>
-                            <th class="px-4 py-3 text-left font-medium">End Date</th>
-                            <th class="px-4 py-3 text-right font-medium">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="receipts.data.length === 0">
-                            <td colspan="7" class="px-4 py-8 text-center text-muted-foreground">
+                <Table>
+                    <TableHeader>
+                        <TableRow class="bg-muted/10">
+                            <TableHead>Occupant</TableHead>
+                            <TableHead>Property</TableHead>
+                            <TableHead>Room</TableHead>
+                            <TableHead>Total</TableHead>
+                            <TableHead>Start Date</TableHead>
+                            <TableHead>End Date</TableHead>
+                            <TableHead>Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow v-if="receipts.data.length === 0">
+                            <TableCell colspan="7" class="px-4 py-8 text-center text-muted-foreground">
                                 No receipts found.
-                            </td>
-                        </tr>
-                        <tr v-for="receipt in receipts.data" :key="receipt.id" class="hover:bg-muted/10">
-                            <td class="px-4 py-3">{{ receipt.tenant?.name }}</td>
-                            <td class="px-4 py-3">{{ receipt.unit.property?.name }}</td>
-                            <td class="px-4 py-3">{{ receipt.unit.room?.name }}</td>
-                            <td class="px-4 py-3">{{ Number(receipt.total).toLocaleString("id-ID", {
+                            </TableCell>
+                        </TableRow>
+                        <TableRow v-for="receipt in receipts.data" :key="receipt.id" class="hover:bg-muted/10">
+                            <TableCell>{{ receipt.tenant?.name }}</TableCell>
+                            <TableCell>{{ receipt.unit.property?.name }}</TableCell>
+                            <TableCell>{{ receipt.unit.room?.name }}</TableCell>
+                            <TableCell>{{ Number(receipt.total).toLocaleString("id-ID", {
                                 style: "currency",
                                 currency: "IDR",
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0
-                            }) }}</td>
-                            <td class="px-4 py-3">{{ receipt.start_date }}</td>
-                            <td class="px-4 py-3">{{ receipt.end_date }}</td>
-                            <td class="px-4 py-3 text-right">
-                                <div class="flex items-center justify-end gap-1">
-                                    <Button variant="ghost" size="sm" as-child>
-                                        <Link :href="receiptsEdit.url(receipt.id)">
-                                            Edit
-                                        </Link>
-                                    </Button>
-                                    <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive"
-                                        @click="deleteReceipt(receipt)">
-                                        Delete
-                                    </Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            }) }}</TableCell>
+                            <TableCell>{{ receipt.start_date }}</TableCell>
+                            <TableCell>{{ receipt.end_date }}</TableCell>
+                            <TableCell class="flex items-center justify-center gap-1">
+                                <Button variant="outline" size="sm" as-child>
+                                    <Link :href="receiptsEdit.url(receipt.id)">
+                                        Edit
+                                    </Link>
+                                </Button>
+                                <Button variant="destructive" size="sm" @click="deleteReceipt(receipt)">
+                                    Delete
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
 
             <!-- Pagination -->

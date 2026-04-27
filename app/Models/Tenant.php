@@ -39,7 +39,7 @@ class Tenant extends Model
     {
         static::saved(function ($tenant) {
             // Check if name, notes, or address changed to avoid redundant API calls
-            if ($tenant->wasRecentlyCreated || $tenant->isDirty(['name', 'notes', 'address'])) {
+            if (DB::getDriverName() === 'pgsql' && ($tenant->wasRecentlyCreated || $tenant->isDirty(['name', 'notes', 'address']))) {
                 
                 // Construct the rich text for the vector database
                 $text = "Tenant: {$tenant->name}. History and behavior: {$tenant->notes}. Address: {$tenant->address}";

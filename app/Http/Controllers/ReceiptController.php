@@ -42,7 +42,7 @@ class ReceiptController extends Controller
     {
         return inertia("receipts/create", [
             "properties" => Property::all(),
-            "units" => Unit::all(),
+            "units" => Unit::all()->load('room'),
             "tenants" => Tenant::all()
         ]);
     }
@@ -83,7 +83,7 @@ class ReceiptController extends Controller
         return inertia("receipts/edit", [
             "receipt" => $receipt->load(['unit', 'tenant']),
             "properties" => Property::all(),
-            "units" => Unit::all(),
+            "units" => Unit::all()->load('room'),
             "tenants" => Tenant::all()
         ]);
     }

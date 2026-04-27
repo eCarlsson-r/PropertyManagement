@@ -17,7 +17,7 @@ class Rule extends Model
     protected static function booted()
     {
         static::saved(function ($rule) {
-            if ($rule->wasRecentlyCreated || $rule->isDirty(['title', 'description'])) {
+            if (DB::getDriverName() === 'pgsql' && ($rule->wasRecentlyCreated || $rule->isDirty(['title', 'description']))) {
                 $text = "Business Rule - {$rule->title}: {$rule->description}";
                 
                 $embedding = app(EmbeddingService::class)->generate($text);

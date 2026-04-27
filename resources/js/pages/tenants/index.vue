@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardAction, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { dashboard } from '@/routes';
 import { index as tenantsIndex, create as tenantsCreate, edit as tenantsEdit, destroy as tenantsDestroy } from '@/routes/tenants';
 import type { Property } from '../properties/index.vue';
@@ -129,44 +130,40 @@ function deleteTenant(tenant: Tenant) {
         </CardHeader>
         <CardContent>
             <div class="overflow-x-auto rounded-md">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-muted/10">
-                            <th class="px-4 py-3 text-left font-medium">Name</th>
-                            <th class="px-4 py-3 text-left font-medium">Property</th>
-                            <th class="px-4 py-3 text-left font-medium">Room</th>
-                            <th class="px-4 py-3 text-left font-medium">Billing Cycle</th>
-                            <th class="px-4 py-3 text-right font-medium">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="tenants.data.length === 0">
-                            <td colspan="5" class="px-4 py-8 text-center text-muted-foreground">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Property</TableHead>
+                            <TableHead>Room</TableHead>
+                            <TableHead>Billing Cycle</TableHead>
+                            <TableHead class="text-center">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow v-if="tenants.data.length === 0">
+                            <TableCell colspan="5" class="px-4 py-8 text-center text-muted-foreground">
                                 No tenants found.
-                            </td>
-                        </tr>
-                        <tr v-for="tenant in tenants.data" :key="tenant.id"
-                            class="hover:bg-muted/10">
-                            <td class="px-4 py-3">{{ tenant.name }}</td>
-                            <td class="px-4 py-3">{{ tenant.unit.property?.name }}</td>
-                            <td class="px-4 py-3">{{ tenant.unit.room?.name }}</td>
-                            <td class="px-4 py-3">{{ tenant.cycle }}</td>
-                            <td class="px-4 py-3 text-right">
-                                <div class="flex items-center justify-end gap-1">
-                                    <Button variant="ghost" size="sm" as-child>
-                                        <Link :href="tenantsEdit.url(tenant.id)">
-                                            Edit
-                                        </Link>
-                                    </Button>
-                                    <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive"
-                                        @click="deleteTenant(tenant)">
-                                        Delete
-                                    </Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow v-for="tenant in tenants.data" :key="tenant.id">
+                            <TableCell>{{ tenant.name }}</TableCell>
+                            <TableCell>{{ tenant.unit.property?.name }}</TableCell>
+                            <TableCell>{{ tenant.unit.room?.name }}</TableCell>
+                            <TableCell>{{ tenant.cycle }}</TableCell>
+                            <TableCell class="flex items-center justify-center gap-1">
+                                <Button variant="outline" size="sm" as-child>
+                                    <Link :href="tenantsEdit.url(tenant.id)">
+                                        Edit
+                                    </Link>
+                                </Button>
+                                <Button variant="destructive" size="sm" @click="deleteTenant(tenant)">
+                                    Delete
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
 
             <!-- Pagination -->

@@ -210,11 +210,15 @@
     }
 
     th {
-        @apply bg-muted/20 text-xs font-bold tracking-widest text-muted-foreground uppercase;
+        @apply bg-muted text-xs font-bold tracking-widest uppercase;
     }
 
     tr {
-        @apply border-b border-white/5 transition-colors;
+        @apply transition-colors;
+    }
+
+    td {
+        @apply border-b border-border;
     }
 
     /* Sidebar Enhancements */

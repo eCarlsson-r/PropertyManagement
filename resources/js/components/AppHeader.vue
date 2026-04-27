@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, Building, Menu, Search, Files, Receipt, User, Sparkles, BarChart3 } from 'lucide-vue-next';
+import { LayoutGrid, Building, Menu, Files, Receipt, User, Sparkles, BarChart3 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
@@ -173,10 +173,6 @@ const rightNavItems: NavItem[] = [
 
             <div class="ml-auto flex items-center space-x-2">
                 <div class="relative flex items-center space-x-1">
-                    <Button variant="ghost" size="icon" class="group h-9 w-9 cursor-pointer hover:bg-primary/10 hover:text-primary">
-                        <Search class="size-5 opacity-80 group-hover:opacity-100" />
-                    </Button>
-
                     <div class="hidden space-x-1 lg:flex">
                         <template v-for="item in rightNavItems" :key="item.title">
                             <TooltipProvider :delay-duration="0">

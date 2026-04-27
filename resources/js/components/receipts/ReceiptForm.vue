@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import type { InertiaForm } from '@inertiajs/vue3';
-import { onMounted, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import type { Unit } from '@/components/properties/UnitModal.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,6 +54,21 @@ const emit = defineEmits<{
     submit: [];
 }>();
 
+const filteredUnits = computed(() => {
+    if (!form.value.property_id) {
+        return props.units;
+    } else {
+        return props.units.filter((u) => u.property_id === Number(form.value.property_id));
+    }
+});
+
+watch(
+    () => form.value.property_id,
+    () => {
+        form.value.unit_id = '';
+    }
+);
+
 const calculateEndDate = () => {
     if (!form.value.start_date) {
         return;
@@ -81,7 +96,8 @@ const calculateEndDate = () => {
 };
 
 const calculateTotal = () => {
-    const unit = props.units.find((unit) => unit.id === form.value.unit_id);
+    const unit = props.units.find((unit) => unit.id === Number(form.value.unit_id));
+    let total = 0;
 
     if (unit && unit.room) {
         let price = 0;
@@ -101,16 +117,57 @@ const calculateTotal = () => {
                 break;
         }
 
-        form.value.total = (price ?? 0) * form.value.receipt_duration;
-    } else {
-        form.value.total = 0;
+        total = (price ?? 0) * form.value.receipt_duration;
     }
+
+    if (form.value.discount_type === 'percentage') {
+        total *= (1 - (form.value.discount_percent / 100));
+    } else if (form.value.discount_type === 'amount') {
+        total -= (form.value.discount_amount || 0);
+    }
+
+    if (form.value.tax) {
+        total *= (1 + (form.value.tax / 100));
+    }
+
+    form.value.total = Number(total.toFixed(0));
 };
+
+watch(
+    [() => form.value.tenant_id],
+    () => {
+        if (form.value.tenant_id) {
+            const tenant = props.tenants.find((tenant) => tenant.id === Number(form.value.tenant_id));
+            const unit = props.units.find((unit) => unit.id === tenant?.unit_id);
+            form.value.property_id = unit?.property_id?.toString() || '';
+            form.value.unit_id = unit?.id?.toString() || '';
+            form.value.receipt_cycle = tenant?.cycle || "monthly";
+        }
+    }
+);
+
+watch(
+    [() => form.value.property_id],
+    () => {
+        if (form.value.tenant_id) {
+            const tenant = props.tenants.find((tenant) => tenant.id === Number(form.value.tenant_id));
+            form.value.unit_id = tenant?.unit_id?.toString() || '';
+        }
+    }
+);
 
 watch(
     [() => form.value.start_date, () => form.value.receipt_duration, () => form.value.receipt_cycle],
     () => {
         calculateEndDate();
+        calculateTotal();
+    }
+);
+
+watch(
+    [() => form.value.unit_id, () => form.value.tax, () => form.value.discount_type, () => form.value.discount_percent, () => form.value.discount_amount],
+    () => {
+        calculateTotal();
     }
 );
 
@@ -121,13 +178,16 @@ watch(
     }
 );
 
+watch(
+    [() => form.value.unit_id],
+    () => {
+        calculateTotal();
+    }
+);
+
 onMounted(() => {
     if (!form.value.end_date) {
         calculateEndDate();
-    }
-
-    if (!form.value.total) {
-        calculateTotal();
     }
 });
 
@@ -176,7 +236,7 @@ onMounted(() => {
                                     <SelectValue placeholder="Unit/Room No." />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem v-for="unit in units" :key="unit.id"
+                                    <SelectItem v-for="unit in filteredUnits" :key="unit.id"
                                         :value="unit.id?.toString() || '0'">
                                         {{ unit.name }}
                                     </SelectItem>
@@ -262,12 +322,12 @@ onMounted(() => {
 
                     <div class="grid grid-cols-2 gap-4">
                         <div class="grid gap-2">
-                            <Label for="tax">Tax (Rp)</Label>
-                            <Input type="number" id="tax" v-model="form.tax" />
+                            <Label for="tax">Tax (%)</Label>
+                            <Input type="number" id="tax" v-model="form.tax" min="0" max="100" />
                         </div>
                         <div class="grid gap-2">
                             <Label for="total">Total Payment (Rp)</Label>
-                            <Input type="number" id="total" v-model="form.total" />
+                            <Input type="number" id="total" v-model="form.total" readonly />
                         </div>
                     </div>
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import { Pencil, Trash } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 import type { Location } from '@/components/properties/LocationModal.vue';
 import PropertyForm from '@/components/properties/PropertyForm.vue';
@@ -7,9 +8,11 @@ import type { Rule } from '@/components/properties/RuleModal.vue';
 import RuleModal from '@/components/properties/RuleModal.vue';
 import type { Unit } from '@/components/properties/UnitModal.vue';
 import UnitModal from '@/components/properties/UnitModal.vue';
+import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { dashboard } from '@/routes';
 import { index as propertiesIndex, update as propertiesUpdate } from '@/routes/properties';
 import type { Room } from '../rooms/index.vue';
@@ -32,6 +35,13 @@ interface Property {
     rules?: Rule[];
     units?: Unit[];
 }
+
+const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR'
+    }).format(value);
+};
 
 const props = defineProps<{
     property: Property;
@@ -93,7 +103,7 @@ function addRule(rule: Rule) {
             form.rules[index] = rule;
         }
     } else {
-        form.rules.push({ ...rule, id: Date.now() });
+        form.rules.push({ ...rule });
     }
 }
 
@@ -109,7 +119,19 @@ function addUnit(unit: Unit) {
             form.units[index] = unit;
         }
     } else {
-        form.units.push({ ...unit, id: Date.now() });
+        form.units.push({ ...unit, room: props.rooms.find((r) => r.id === unit.room_id) });
+    }
+}
+
+function removeRule(rule: Rule) {
+    if (form.rules) {
+        form.rules = form.rules.filter((r) => r.id !== rule.id);
+    }
+}
+
+function removeUnit(unit: Unit) {
+    if (form.units) {
+        form.units = form.units.filter((u) => u.id !== unit.id);
     }
 }
 
@@ -153,11 +175,31 @@ function submit() {
                     <RuleModal v-model:rule="selectedRule" v-model:open="isRuleModalOpen" />
                 </CardHeader>
                 <CardContent>
-                    <div @click="selectedRule = rule; isRuleModalOpen = true" v-for="rule in (form.rules ?? [])"
-                        :key="rule.id" class="cursor-pointer hover:bg-neutral-100 p-2 rounded">
-                        {{ rule.title }}
-                        {{ rule.description }}
-                    </div>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Title</TableHead>
+                                <TableHead>Description</TableHead>
+                                <TableHead>Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            <TableRow
+                                v-for="rule in (form.rules ?? [])" :key="rule.id"
+                                class="cursor-pointer hover:bg-neutral-100 p-2 rounded">
+                                <TableCell>{{ rule.title }}</TableCell>
+                                <TableCell>{{ rule.description }}</TableCell>
+                                <TableCell class="flex space-x-2 items-center">
+                                    <Button variant="outline" @click="selectedRule = rule; isRuleModalOpen = true">
+                                        <Pencil />
+                                    </Button>
+                                    <Button variant="destructive" @click="removeRule(rule)">
+                                        <Trash />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
                 </CardContent>
             </Card>
 
@@ -167,45 +209,52 @@ function submit() {
                     <UnitModal v-model:unit="selectedUnit" v-model:open="isUnitModalOpen" :rooms="rooms ?? []" />
                 </CardHeader>
                 <CardContent>
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="table-room" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Daily Rent</th>
-                                    <th>Weekly Rent</th>
-                                    <th>Monthly Rent</th>
-                                    <th>Annual Rent</th>
-                                    <th>Rentable</th>
-                                    <th>Condition</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="unit in property.units ?? []" :key="unit.id">
-                                    <td>{{ unit.name }}</td>
-                                    <td>{{ unit.room?.daily_price }}</td>
-                                    <td>{{ unit.room?.weekly_price }}</td>
-                                    <td>{{ unit.room?.monthly_price }}</td>
-                                    <td>{{ unit.room?.annual_price }}</td>
-                                    <td>
-                                        <Switch v-model="unit.rentable" />
-                                    </td>
-                                    <td>
-                                        <Select v-model="unit.condition">
-                                            <SelectTrigger>
-                                                <SelectValue :placeholder="unit.condition" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="clean">Clean</SelectItem>
-                                                <SelectItem value="dirty">Dirty</SelectItem>
-                                                <SelectItem value="maintenance">Maintenance</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Daily Rent</TableHead>
+                                <TableHead>Weekly Rent</TableHead>
+                                <TableHead>Monthly Rent</TableHead>
+                                <TableHead>Annual Rent</TableHead>
+                                <TableHead>Rentable</TableHead>
+                                <TableHead>Condition</TableHead>
+                                <TableHead>Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            <TableRow v-for="unit in (form.units ?? [])" :key="unit.id">
+                                <TableCell>{{ unit.name }}</TableCell>
+                                <TableCell>{{ formatCurrency(unit.room?.daily_price || 0) }}</TableCell>
+                                <TableCell>{{ formatCurrency(unit.room?.weekly_price || 0) }}</TableCell>
+                                <TableCell>{{ formatCurrency(unit.room?.monthly_price || 0) }}</TableCell>
+                                <TableCell>{{ formatCurrency(unit.room?.annual_price || 0) }}</TableCell>
+                                <TableCell>
+                                    <Switch v-model="unit.rentable" disabled />
+                                </TableCell>
+                                <TableCell>
+                                    <Select v-model="unit.condition" disabled>
+                                        <SelectTrigger>
+                                            <SelectValue :placeholder="unit.condition" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="clean">Clean</SelectItem>
+                                            <SelectItem value="dirty">Dirty</SelectItem>
+                                            <SelectItem value="maintenance">Maintenance</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </TableCell>
+                                <TableCell class="flex space-x-2 items-center">
+                                    <Button variant="outline" @click="selectedUnit = unit; isUnitModalOpen = true">
+                                        <Pencil />
+                                    </Button>
+                                    <Button variant="destructive" @click="removeUnit(unit)">
+                                        <Trash />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
                 </CardContent>
             </Card>
         </div>

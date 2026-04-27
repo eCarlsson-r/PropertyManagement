@@ -4,6 +4,7 @@ import { ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardAction, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { dashboard } from '@/routes';
 import { index as propertiesIndex, create as propertiesCreate, edit as propertiesEdit, destroy as propertiesDestroy } from '@/routes/properties';
 
@@ -100,41 +101,36 @@ function deleteProperty(property: Property) {
         </CardHeader>
         <CardContent>
             <div class="overflow-x-auto rounded-md">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-muted/10">
-                            <th class="px-4 py-3 text-left font-medium">Name</th>
-                            <th class="px-4 py-3 text-left font-medium">Location</th>
-                            <th class="px-4 py-3 text-right font-medium">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="properties.data.length === 0">
-                            <td colspan="3" class="px-4 py-8 text-center text-muted-foreground">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Location</TableHead>
+                            <TableHead class="text-center">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow v-if="properties.data.length === 0">
+                            <TableCell colspan="3" class="px-4 py-8 text-center text-muted-foreground">
                                 No properties found.
-                            </td>
-                        </tr>
-                        <tr v-for="property in properties.data" :key="property.id"
-                            class="hover:bg-muted/10">
-                            <td class="px-4 py-3">{{ property.name }}</td>
-                            <td class="px-4 py-3">{{ property.location?.address }}, {{ property.location?.city }}
-                            </td>
-                            <td class="px-4 py-3 text-right">
-                                <div class="flex items-center justify-end gap-1">
-                                    <Button variant="ghost" size="sm" as-child>
-                                        <Link :href="propertiesEdit.url(property.id)">
-                                            Edit
-                                        </Link>
-                                    </Button>
-                                    <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive"
-                                        @click="deleteProperty(property)">
-                                        Delete
-                                    </Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow v-for="property in properties.data" :key="property.id">
+                            <TableCell>{{ property.name }}</TableCell>
+                            <TableCell>{{ property.location?.address }}, {{ property.location?.city }}</TableCell>
+                            <TableCell class="flex items-center justify-center gap-1">
+                                <Button variant="outline" size="sm" as-child>
+                                    <Link :href="propertiesEdit.url(property.id)">
+                                        Edit
+                                    </Link>
+                                </Button>
+                                <Button variant="destructive" size="sm" @click="deleteProperty(property)">
+                                    Delete
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
 
             <!-- Pagination -->

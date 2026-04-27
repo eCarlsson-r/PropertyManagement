@@ -98,15 +98,24 @@ class PropertyController extends Controller
 
         // Update Rules if provided
         if (isset($request->rules)) {
-            $property->rules()->delete(); // Remove old rules
+            $ruleIds = collect($request->rules)->pluck('id')->filter()->toArray();
+            $property->rules()->whereNotIn('id', $ruleIds)->delete();
+
             foreach ($request->rules as $rule) {
                 if (!empty($rule['title'])) {
-                    $property->rules()->create($rule);
+                    if (isset($rule['id'])) {
+                        $property->rules()->where('id', $rule['id'])->update($rule);
+                    } else {
+                        $property->rules()->create($rule);
+                    }
                 }
             }
         }
 
         if (isset($request->units)) {
+            $unitIds = collect($request->units)->pluck('id')->filter()->toArray();
+            $property->units()->whereNotIn('id', $unitIds)->delete();
+
             foreach($request->units as $unit) {
                 if (!isset($unit['id'])) {
                     Unit::create($unit + ['property_id' => $property->id]);

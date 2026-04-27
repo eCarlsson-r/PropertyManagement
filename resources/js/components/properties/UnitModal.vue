@@ -119,9 +119,9 @@ const submit = () => {
                             <SelectValue placeholder="Condition" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="new">New</SelectItem>
-                            <SelectItem value="good">Good</SelectItem>
-                            <SelectItem value="poor">Poor</SelectItem>
+                            <SelectItem value="clean">Clean</SelectItem>
+                            <SelectItem value="dirty">Dirty</SelectItem>
+                            <SelectItem value="maintenance">Maintenance</SelectItem>
                         </SelectContent>
                     </Select>
                     <InputError :message="form.errors.condition" />

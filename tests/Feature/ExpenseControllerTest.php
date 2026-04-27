@@ -29,10 +29,7 @@ class ExpenseControllerTest extends TestCase
             'owner_mobile' => '81234567890',
             'manager_name' => 'Manager',
             'manager_country_code' => '+62',
-            'manager_mobile' => '81234567891',
-            'account_owner' => 'Owner',
-            'account_bank' => 'BCA',
-            'account_number' => '123',
+            'manager_mobile' => '81234567891'
         ]);
     }
 

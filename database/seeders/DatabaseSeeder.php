@@ -131,7 +131,7 @@ class DatabaseSeeder extends Seeder
                         Receipt::create([
                             "tenant_id" => $tenant->id,
                             "unit_id" => $unit->id,
-                            "receipt_cycle" => "February 2026",
+                            "receipt_cycle" => "monthly",
                             "start_date" => "2026-02-01",
                             "end_date" => "2026-02-28",
                             "discount_type" => "none",
@@ -146,7 +146,7 @@ class DatabaseSeeder extends Seeder
                         Receipt::create([
                             "tenant_id" => $tenant->id,
                             "unit_id" => $unit->id,
-                            "receipt_cycle" => "February 2026",
+                            "receipt_cycle" => "monthly",
                             "start_date" => "2026-02-01",
                             "end_date" => "2026-02-28",
                             "discount_type" => "none",

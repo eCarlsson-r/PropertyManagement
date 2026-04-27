@@ -22,7 +22,7 @@ class Expense extends Model
     protected static function booted()
     {
         static::saved(function ($expense) {
-            if ($expense->wasRecentlyCreated || $expense->isDirty(['title', 'notes', 'amount'])) {
+            if (DB::getDriverName() === 'pgsql' && ($expense->wasRecentlyCreated || $expense->isDirty(['title', 'notes', 'amount']))) {
                 $text = "Expense: {$expense->title} ({$expense->category}) costing {$expense->amount}. Details: {$expense->notes}";
                 
                 $embedding = app(EmbeddingService::class)->generate($text);
